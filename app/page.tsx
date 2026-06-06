@@ -222,7 +222,7 @@ export default function HomePage() {
                 <label className="form-label">
                   {L.search.dobLabel}
                   <span style={{ color: 'var(--c-text-light)', fontSize: '0.72rem', marginInlineStart: '4px' }}>
-                   {(L.search as any).dobOptional ?? 'اختياري'}
+                    {'اختياري'}
                   </span>
                 </label>
                 <input
@@ -232,7 +232,7 @@ export default function HomePage() {
                   onChange={e => setDob(e.target.value)}
                   dir="ltr"
                 />
-                <span style={{ fontSize: '0.75rem', color: 'var(--c-text-light)' }}>{L.search.dobHint ?? 'لتضييق نتائج البحث بالاسم'}</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--c-text-light)' }}>{'لتضييق نتائج البحث بالاسم'}</span>
               </div>
               <div>
                 <label className="form-label">{L.search.semesterLabel}</label>
