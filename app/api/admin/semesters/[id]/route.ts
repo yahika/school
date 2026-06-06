@@ -24,7 +24,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         where: { semesterId: id },
         select: {
           nameAr: true,
-                totalScore: true,
+          parentPhone: true,
+          totalScore: true,
           maxScore: true,
           percentage: true,
           status: true,
