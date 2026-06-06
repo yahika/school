@@ -28,18 +28,19 @@ function parseExcel(file: File): Promise<{ headers: string[]; students: ParsedSt
         const data = new Uint8Array(e.target!.result as ArrayBuffer)
         const wb = XLSX.read(data, { type: 'array', cellDates: true })
         const ws = wb.Sheets[wb.SheetNames[0]]
-        const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws, { header: 1 }) as unknown[][]
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const rows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
 
         if (rows.length < 2) throw new Error('empty')
 
-        const headerRow = (rows[0] as string[]).map(h => String(h ?? '').trim())
+        const headerRow: string[] = rows[0].map((h: unknown) => String(h ?? '').trim())
         // Fixed cols: 0=seat, 1=nameAr, 2=nameEn, 3=gradeAr, 4=gradeEn, 5=dob, 6=parentPhone
         // From col 7 onwards: subject score columns
-        const subjectHeaders = headerRow.slice(7)
+        const subjectHeaders: string[] = headerRow.slice(7)
 
         const students: ParsedStudent[] = []
         for (let i = 1; i < rows.length; i++) {
-          const row = rows[i] as (string | number)[]
+          const row: unknown[] = rows[i]
           if (!row || !row[0]) continue
 
           const seatNumber  = String(row[0] ?? '').trim()
@@ -59,7 +60,7 @@ function parseExcel(file: File): Promise<{ headers: string[]; students: ParsedSt
           const subjects = subjectHeaders.map((header, idx) => {
             const score = Number(row[7 + idx] ?? 0)
             return { nameAr: header, nameEn: header, score, maxScore: 100 }
-          }).filter(s => s.score !== null && !isNaN(s.score))
+          }).filter(s => !isNaN(s.score))
 
           const totalScore = subjects.reduce((sum, s) => sum + s.score, 0)
           const maxScore   = subjects.reduce((sum, s) => sum + s.maxScore, 0)
