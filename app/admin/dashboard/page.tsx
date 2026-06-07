@@ -477,7 +477,6 @@ export default function AdminDashboard() {
         </div>
 
       </div>
-
       {/* ── Toast ── */}
       {toast && (
         <div className={`toast ${toast.type}`}>

@@ -468,7 +468,6 @@ function ResultCard({ result, lang, L }: { result: Result; lang: Lang; L: typeof
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         flexWrap: 'wrap', gap: '20px'
       }}>
-        {/* Totals */}
         <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
           <div>
             <div style={{ fontSize: '0.78rem', color: 'var(--c-text-muted)', fontWeight: 500 }}>{L.result.total}</div>
@@ -494,13 +493,11 @@ function ResultCard({ result, lang, L }: { result: Result; lang: Lang; L: typeof
             </div>
           )}
         </div>
-
-        {/* Pass / Fail badge */}
         <div>
           <div style={{ fontSize: '0.78rem', color: 'var(--c-text-muted)', fontWeight: 500, marginBottom: '6px', textAlign: 'center' }}>
             {L.result.finalResult}
           </div>
-          <span className={`status-badge ${isPass ? 'status-pass' : 'status-fail'}`} style={{ fontSize: '1.25rem' }}>
+          <span className={isPass ? 'status-badge status-pass' : 'status-badge status-fail'} style={{ fontSize: '1.25rem' }}>
             {isPass ? '✅' : '❌'} {isPass ? L.result.pass : L.result.fail}
           </span>
         </div>

@@ -75,7 +75,6 @@ export async function POST(req: NextRequest) {
           gradeAr: r.gradeAr,
           gradeEn: r.gradeEn ?? '',
           dateOfBirth: r.dateOfBirth ?? null,
-          parentPhone: r.parentPhone?.trim() || null,
           ...stats,
           subjects: { create: subjects },
         },
