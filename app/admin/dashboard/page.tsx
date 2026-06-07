@@ -270,6 +270,27 @@ export default function AdminDashboard() {
 
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '28px 16px' }}>
 
+        {/* ── Quick Nav ── */}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '28px' }}>
+          {[
+            { href: '/admin/announcements', icon: '📢', label: 'الإعلانات' },
+            { href: '/admin/applications', icon: '📝', label: 'طلبات التسجيل' },
+            { href: '/admin/schedule', icon: '📅', label: 'جدول الامتحانات' },
+            { href: '/admin/fees', icon: '💰', label: 'المصاريف' },
+            { href: '/admin/messages', icon: '📬', label: 'الرسائل' },
+          ].map(link => (
+            <a key={link.href} href={link.href} style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '10px 18px', borderRadius: '10px', textDecoration: 'none',
+              background: 'white', border: '1px solid var(--c-border)',
+              color: 'var(--c-text)', fontWeight: 600, fontSize: '0.875rem',
+              boxShadow: 'var(--shadow-sm)',
+            }}>
+              {link.icon} {link.label}
+            </a>
+          ))}
+        </div>
+
         {/* ── Stats ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           {[
@@ -454,10 +475,10 @@ export default function AdminDashboard() {
                       background: sem.isPublished ? 'var(--c-success-bg)' : 'var(--c-warning-bg)',
                       color: sem.isPublished ? 'var(--c-success)' : 'var(--c-warning)',
                     }}>
-                      {sem.isPublished ? `● ${L.published}` : `○ ${L.unpublished}`}
+                      {sem.isPublished ? '● ' + L.published : '○ ' + L.unpublished}
                     </span>
                     <button
-                      className={`btn-primary btn-sm ${sem.isPublished ? 'btn-outline' : ''}`}
+                      className={'btn-primary btn-sm' + (sem.isPublished ? ' btn-outline' : '')}
                       onClick={() => handlePublish(sem.id, sem.isPublished)}
                       style={sem.isPublished ? { color: 'var(--c-warning)', borderColor: 'var(--c-warning)' } : {}}
                     >
@@ -467,7 +488,7 @@ export default function AdminDashboard() {
                       className="btn-primary btn-danger btn-sm"
                       onClick={() => handleDelete(sem.id)}
                     >
-                      🗑️ {L.deleteBtn}
+                      {L.deleteBtn}
                     </button>
                   </div>
                 </div>
@@ -477,9 +498,9 @@ export default function AdminDashboard() {
         </div>
 
       </div>
-      {/* ── Toast ── */}
+
       {toast && (
-        <div className={`toast ${toast.type}`}>
+        <div className={'toast ' + toast.type}>
           {toast.type === 'success' ? '✅' : '❌'} {toast.msg}
         </div>
       )}

@@ -10,17 +10,17 @@ datasource db {
 model Admin {
   id        Int      @id @default(autoincrement())
   username  String   @unique
-  password  String   // bcrypt hashed — never stored in plaintext
+  password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Semester {
   id           Int       @id @default(autoincrement())
-  nameAr       String    // e.g. "الفصل الدراسي الأول 2024-2025"
-  nameEn       String    // e.g. "First Semester 2024-2025"
-  academicYear String    // e.g. "2024-2025"
-  term         String    // "first" | "second" | "final"
+  nameAr       String
+  nameEn       String
+  academicYear String
+  term         String
   isPublished  Boolean   @default(false)
   publishedAt  DateTime?
   createdAt    DateTime  @default(now())
@@ -35,14 +35,15 @@ model Result {
   seatNumber  String
   nameAr      String
   nameEn      String?
-  gradeAr     String    // e.g. "الصف العاشر"
-  gradeEn     String?   // e.g. "Grade 10"
-  dateOfBirth String?   // "YYYY-MM-DD" string — used for identity verification
+  gradeAr     String
+  gradeEn     String?
+  dateOfBirth String?
   totalScore  Float
   maxScore    Float
   percentage  Float
-  status      String    // "pass" | "fail"
-  letterGrade String?   // "A+", "A", "B+", ...
+  status      String
+  letterGrade String?
+  rank        Int?
   subjects    Subject[]
   createdAt   DateTime  @default(now())
 
@@ -52,14 +53,80 @@ model Result {
 }
 
 model Subject {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   resultId Int
-  result   Result @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  result   Result  @relation(fields: [resultId], references: [id], onDelete: Cascade)
   nameAr   String
   nameEn   String?
   score    Float
-  maxScore Float  @default(100)
-  passMark Float  @default(50)
-  status   String // "pass" | "fail"
-  orderIdx Int    @default(0)
+  maxScore Float   @default(100)
+  passMark Float   @default(50)
+  status   String
+  orderIdx Int     @default(0)
+}
+
+model Announcement {
+  id          Int       @id @default(autoincrement())
+  titleAr     String
+  titleEn     String
+  bodyAr      String
+  bodyEn      String
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Application {
+  id            Int      @id @default(autoincrement())
+  studentNameAr String
+  studentNameEn String?
+  dateOfBirth   String
+  gradeApplying String
+  parentName    String
+  parentPhone   String
+  parentEmail   String?
+  address       String?
+  notes         String?
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ExamSchedule {
+  id         Int      @id @default(autoincrement())
+  titleAr    String
+  titleEn    String
+  gradeAr    String
+  gradeEn    String
+  subjectAr  String
+  subjectEn  String
+  examDate   String
+  startTime  String?
+  location   String?
+  createdAt  DateTime @default(now())
+}
+
+model FeeRecord {
+  id           Int       @id @default(autoincrement())
+  studentName  String
+  seatNumber   String?
+  gradeAr      String
+  amount       Float
+  isPaid       Boolean   @default(false)
+  paidAt       DateTime?
+  notes        String?
+  academicYear String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String?
+  phone     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
