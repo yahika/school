@@ -106,6 +106,31 @@ export default function AdminDashboard() {
       .catch(() => router.push('/admin/login'))
   }, [router])
 
+  // Live counts
+  const [liveCounts, setLiveCounts] = useState({ applications: 0, pending: 0, announcements: 0, messages: 0, schedule: 0 })
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const [apps, anns, sched, msgs] = await Promise.all([
+          fetch('/api/admin/applications').then(r => r.json()),
+          fetch('/api/admin/announcements').then(r => r.json()),
+          fetch('/api/admin/schedule').then(r => r.json()),
+          fetch('/api/admin/messages').then(r => r.json()),
+        ])
+        setLiveCounts({
+          applications: (apps.applications ?? []).length,
+          pending: (apps.applications ?? []).filter((a: {status:string}) => a.status === 'pending').length,
+          announcements: (anns.announcements ?? []).length,
+          schedule: (sched.schedule ?? []).length,
+          messages: (msgs.messages ?? []).filter((m: {isRead:boolean}) => !m.isRead).length,
+        })
+      } catch {}
+    }
+    fetchCounts()
+    const t = setInterval(fetchCounts, 30000)
+    return () => clearInterval(t)
+  }, [])
+
   // Semester list
   const [semesters, setSemesters] = useState<SemesterRow[]>([])
   const [semLoading, setSemLoading] = useState(true)
@@ -270,23 +295,36 @@ export default function AdminDashboard() {
 
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '28px 16px' }}>
 
-        {/* ── Quick Nav ── */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '28px' }}>
+        {/* ── Live Section Stats ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '12px', marginBottom: '28px' }}>
           {[
-            { href: '/admin/announcements', icon: '📢', label: 'الإعلانات' },
-            { href: '/admin/applications', icon: '📝', label: 'طلبات التسجيل' },
-            { href: '/admin/schedule', icon: '📅', label: 'جدول الامتحانات' },
-            { href: '/admin/fees', icon: '💰', label: 'المصاريف' },
-            { href: '/admin/messages', icon: '📬', label: 'الرسائل' },
+            { href: '/admin/applications', icon: '📝', label: 'طلبات التسجيل', count: liveCounts.applications, badge: liveCounts.pending > 0 ? `${liveCounts.pending} جديد` : null, color: '#0a5c36' },
+            { href: '/admin/announcements', icon: '📢', label: 'الإعلانات', count: liveCounts.announcements, badge: null, color: '#2563eb' },
+            { href: '/admin/schedule', icon: '📅', label: 'جدول الامتحانات', count: liveCounts.schedule, badge: null, color: '#7c3aed' },
+            { href: '/admin/messages', icon: '📬', label: 'الرسائل', count: liveCounts.messages, badge: liveCounts.messages > 0 ? 'غير مقروء' : null, color: '#dc2626' },
+            { href: '/admin/fees', icon: '💰', label: 'المصاريف', count: null, badge: null, color: '#c8972b' },
+            { href: '/admin/parents', icon: '👨‍👩‍👧', label: 'أولياء الأمور', count: null, badge: null, color: '#7c3aed' },
+            { href: '/admin/students', icon: '👨‍🎓', label: 'دليل الطلاب', count: null, badge: null, color: '#0369a1' },
           ].map(link => (
             <a key={link.href} href={link.href} style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '10px 18px', borderRadius: '10px', textDecoration: 'none',
-              background: 'white', border: '1px solid var(--c-border)',
-              color: 'var(--c-text)', fontWeight: 600, fontSize: '0.875rem',
-              boxShadow: 'var(--shadow-sm)',
-            }}>
-              {link.icon} {link.label}
+              display: 'flex', flexDirection: 'column', gap: '8px',
+              padding: '16px', borderRadius: '14px', textDecoration: 'none',
+              background: 'white', border: '1px solid #e2e8f0',
+              color: '#1e293b', fontWeight: 600, fontSize: '0.85rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+              transition: 'all 0.2s', position: 'relative',
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'none'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)' }}
+            >
+              {link.badge && (
+                <span style={{ position: 'absolute', top: '8px', left: isRtl ? '8px' : 'auto', right: isRtl ? 'auto' : '8px', background: '#dc2626', color: 'white', fontSize: '0.62rem', padding: '2px 7px', borderRadius: '999px', fontWeight: 700 }}>
+                  {link.badge}
+                </span>
+              )}
+              <span style={{ fontSize: '1.6rem' }}>{link.icon}</span>
+              {link.count !== null && <span style={{ fontSize: '1.6rem', fontWeight: 900, color: link.color, lineHeight: 1 }}>{link.count}</span>}
+              <span style={{ color: '#64748b', fontSize: '0.78rem' }}>{link.label}</span>
             </a>
           ))}
         </div>

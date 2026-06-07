@@ -24,7 +24,7 @@ const statusColors: Record<string, { bg: string; color: string; label: string }>
 
 export default function ApplicationsAdmin() {
   const [apps, setApps] = useState<Application[]>([])
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('pending')
   const [loadingId, setLoadingId] = useState<number | null>(null)
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
   const [selected, setSelected] = useState<Application | null>(null)
@@ -246,10 +246,10 @@ export default function ApplicationsAdmin() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { key: 'all', label: 'الكل', color: '#0a5c36' },
-          { key: 'pending', label: 'قيد المراجعة', color: '#d97706' },
-          { key: 'accepted', label: 'مقبول', color: '#16a34a' },
-          { key: 'rejected', label: 'مرفوض', color: '#dc2626' },
+          { key: 'pending', label: 'قيد المراجعة', color: '#d97706', hint: 'الطلبات الجديدة' },
+          { key: 'all', label: 'الكل', color: '#0a5c36', hint: 'جميع الطلبات' },
+          { key: 'accepted', label: 'مقبول', color: '#16a34a', hint: 'الطلبات المقبولة' },
+          { key: 'rejected', label: 'مرفوض', color: '#dc2626', hint: 'الطلبات المرفوضة' },
         ].map(s => (
           <button key={s.key} onClick={() => setFilter(s.key)}
             style={{
@@ -309,8 +309,20 @@ export default function ApplicationsAdmin() {
         ))}
         {filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px', color: '#64748b', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>📭</div>
-            لا توجد طلبات
+            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>
+              {filter === 'pending' ? '✅' : '📭'}
+            </div>
+            <div style={{ fontWeight: 700, marginBottom: '8px', color: '#374151' }}>
+              {filter === 'pending' ? 'لا توجد طلبات معلقة' : 'لا توجد طلبات'}
+            </div>
+            {filter === 'pending' && counts.accepted > 0 && (
+              <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+                يوجد {counts.accepted} طلب مقبول —{' '}
+                <button onClick={() => setFilter('accepted')} style={{ color: '#16a34a', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700, fontFamily: 'inherit', fontSize: '0.85rem', textDecoration: 'underline' }}>
+                  عرضها
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -130,3 +130,21 @@ model ContactMessage {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model ParentAccount {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  password     String
+  phone        String?
+  seatNumber   String   // links to Result.seatNumber
+  studentName  String   // display name of child
+  gradeAr      String?
+  gradeEn      String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+  @@index([seatNumber])
+}

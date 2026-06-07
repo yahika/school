@@ -1,6 +1,7 @@
 @echo off
 echo ================================================
-echo  FIXING DATABASE - Creating missing tables
+echo  FIXING DATABASE - Creating all tables
+echo  (Parent portal, announcements, applications...)
 echo ================================================
 echo.
 

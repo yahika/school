@@ -433,19 +433,27 @@ function ResultCard({ result, lang, L }: { result: Result; lang: Lang; L: typeof
             {result.subjects.map(sub => {
               const subPct = Math.round((sub.score / sub.maxScore) * 100)
               const subPass = sub.status === 'pass'
+              const barColor = subPct >= 85 ? '#0a5c36' : subPct >= 70 ? '#16a34a' : subPct >= 50 ? '#d97706' : '#dc2626'
               return (
                 <tr key={sub.id} className="subject-row">
-                  <td style={{ fontWeight: 500 }}>
+                  <td style={{ fontWeight: 600, color: '#0f172a' }}>
                     {lang === 'ar' ? sub.nameAr : (sub.nameEn ?? sub.nameAr)}
                   </td>
-                  <td style={{ textAlign: 'center' }} className={subPass ? 'subject-score-pass' : 'subject-score-fail'}>
+                  <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '1rem' }} className={subPass ? 'subject-score-pass' : 'subject-score-fail'}>
                     {sub.score}
                   </td>
                   <td style={{ textAlign: 'center', color: 'var(--c-text-muted)' }}>{sub.maxScore}</td>
-                  <td style={{ textAlign: 'center', color: 'var(--c-text-muted)' }}>{subPct}%</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                      <div style={{ width: '60px', height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${subPct}%`, background: barColor, borderRadius: '999px', transition: 'width 1s ease' }} />
+                      </div>
+                      <span style={{ fontWeight: 600, color: barColor, minWidth: '36px', fontSize: '0.85rem' }}>{subPct}%</span>
+                    </div>
+                  </td>
                   <td style={{ textAlign: 'center' }}>
                     <span style={{
-                      padding: '3px 10px', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600,
+                      padding: '4px 12px', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 700,
                       background: subPass ? 'var(--c-success-bg)' : 'var(--c-danger-bg)',
                       color: subPass ? 'var(--c-success)' : 'var(--c-danger)',
                     }}>
