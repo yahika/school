@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: { resultId: s
 
     if (!result) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-    const doc = new PDFDocument({ size: 'A4', margin: 50, rtl: false })
+    const doc = new PDFDocument({ size: 'A4', margin: 50 })
     const chunks: Buffer[] = []
 
     doc.on('data', (chunk: Buffer) => chunks.push(chunk))
