@@ -163,7 +163,7 @@ export default function CalendarPage() {
                 const isToday = new Date().getDate() === day && new Date().getMonth() === month && new Date().getFullYear() === year
                 return (
                   <div key={day} className="day-cell" style={{ padding: '6px 4px', minHeight: '72px', background: isToday ? '#f0fdf4' : 'white', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s' }}>
-                    <div style={{ fontWeight: isToday ? 900 : 500, fontSize: '0.85rem', color: isToday ? '#0a5c36' : '#374151', marginBottom: '4px', width: '24px', height: '24px', borderRadius: '50%', background: isToday ? '#0a5c36' : 'transparent', color: isToday ? 'white' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ fontWeight: isToday ? 900 : 500, fontSize: '0.85rem', marginBottom: '4px', width: '24px', height: '24px', borderRadius: '50%', background: isToday ? '#0a5c36' : 'transparent', color: isToday ? 'white' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {day}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -225,3 +225,4 @@ export default function CalendarPage() {
     </div>
   )
 }
+
