@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db'
 // @ts-ignore
 import PDFDocument from 'pdfkit'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(_req: NextRequest, { params }: { params: { resultId: string } }) {
   try {
     const result = await prisma.result.findUnique({

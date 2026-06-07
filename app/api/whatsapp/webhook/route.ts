@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 // UltraMsg webhook — receives JSON, responds by calling UltraMsg send API
 // Docs: https://docs.ultramsg.com/api/post/messages/chat
 

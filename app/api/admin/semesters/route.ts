@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { computeResultStats } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/admin/semesters — list all semesters with counts
 export async function GET() {
   const semesters = await prisma.semester.findMany({

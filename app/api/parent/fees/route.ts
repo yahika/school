@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { jwtVerify } from 'jose'
 
+export const dynamic = 'force-dynamic'
+
 const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? 'parent-secret-key')
 
 export async function GET(req: NextRequest) {

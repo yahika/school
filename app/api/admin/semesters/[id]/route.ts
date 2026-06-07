@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 // PATCH /api/admin/semesters/[id] — publish/unpublish or update
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -3,6 +3,8 @@ import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 import { SignJWT } from 'jose'
 
+export const dynamic = 'force-dynamic'
+
 const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? 'parent-secret-key')
 
 export async function POST(req: NextRequest) {

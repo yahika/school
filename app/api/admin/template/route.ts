@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import * as XLSX from 'xlsx'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/admin/template — download a blank Excel template
 export async function GET() {
   const wb = XLSX.utils.book_new()
