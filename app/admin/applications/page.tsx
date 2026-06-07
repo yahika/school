@@ -38,7 +38,12 @@ export default function ApplicationsAdmin() {
     }
   }
 
-  useEffect(() => { load() }, [])
+  // Load on mount + auto-refresh every 15 seconds
+  useEffect(() => {
+    load()
+    const interval = setInterval(load, 15000)
+    return () => clearInterval(interval)
+  }, [])
 
   function showToast(msg: string, ok: boolean) {
     setToast({ msg, ok })
