@@ -6,6 +6,8 @@ interface Parent { id: number; name: string; email: string; phone: string; stude
 interface Subject { nameAr: string; nameEn: string; score: number; maxScore: number; passMark: number; status: string }
 interface Result { id: number; seatNumber: string; nameAr: string; gradeAr: string; totalScore: number; maxScore: number; percentage: number; status: string; letterGrade: string; rank: number; subjects: Subject[]; semester: { nameAr: string; nameEn: string; academicYear: string; term: string } }
 interface Announcement { id: number; titleAr: string; titleEn: string; bodyAr: string; bodyEn: string; publishedAt: string }
+interface FeeRecord { id: number; studentName: string; amount: number; isPaid: boolean; paidAt: string | null; notes: string | null; academicYear: string; createdAt: string }
+interface FeeSummary { total: number; paid: number; remaining: number }
 
 export default function ParentDashboard() {
   const router = useRouter()
@@ -15,7 +17,9 @@ export default function ParentDashboard() {
   const [results, setResults] = useState<Result[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [selectedResult, setSelectedResult] = useState<Result | null>(null)
-  const [activeTab, setActiveTab] = useState<'overview'|'results'|'announcements'|'profile'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview'|'results'|'announcements'|'fees'|'profile'>('overview')
+  const [fees, setFees] = useState<FeeRecord[]>([])
+  const [feeSummary, setFeeSummary] = useState<FeeSummary>({ total: 0, paid: 0, remaining: 0 })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -26,19 +30,23 @@ export default function ParentDashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const [meRes, resultsRes, annRes] = await Promise.all([
+        const [meRes, resultsRes, annRes, feesRes] = await Promise.all([
           fetch('/api/parent/me'),
           fetch('/api/parent/results'),
           fetch('/api/announcements'),
+          fetch('/api/parent/fees'),
         ])
         if (!meRes.ok) { router.push('/parent/login'); return }
         const meData = await meRes.json()
         const resultsData = await resultsRes.json()
         const annData = await annRes.json()
+        const feesData = await feesRes.json()
         setParent(meData.parent)
         setResults(resultsData.results ?? [])
         setAnnouncements((annData.announcements ?? []).slice(0, 5))
         if (resultsData.results?.length > 0) setSelectedResult(resultsData.results[0])
+        setFees(feesData.fees ?? [])
+        if (feesData.summary) setFeeSummary(feesData.summary)
       } catch { router.push('/parent/login') }
       finally { setLoading(false) }
     }
@@ -77,6 +85,7 @@ export default function ParentDashboard() {
   const navItems = [
     { key: 'overview', icon: '🏠', label: isRtl ? 'نظرة عامة' : 'Overview' },
     { key: 'results', icon: '📊', label: isRtl ? 'النتائج' : 'Results' },
+    { key: 'fees', icon: '💰', label: isRtl ? 'المصاريف' : 'Fees' },
     { key: 'announcements', icon: '📢', label: isRtl ? 'الإعلانات' : 'Announcements' },
     { key: 'profile', icon: '👤', label: isRtl ? 'الملف الشخصي' : 'Profile' },
   ]
@@ -377,6 +386,61 @@ export default function ParentDashboard() {
                       </div>
                       <h3 style={{ fontWeight: 800, color: '#0f172a', marginBottom: '10px', fontSize: '1rem' }}>{lang === 'ar' ? a.titleAr : a.titleEn}</h3>
                       <p style={{ color: '#475569', lineHeight: 1.8, margin: 0, fontSize: '0.9rem' }}>{lang === 'ar' ? a.bodyAr : a.bodyEn}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* FEES */}
+          {activeTab === 'fees' && (
+            <div>
+              <h2 style={{ fontWeight: 800, color: '#0f172a', marginBottom: '20px', fontSize: '1.3rem' }}>
+                💰 {isRtl ? 'المصاريف الدراسية' : 'School Fees'}
+              </h2>
+
+              {/* Summary cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
+                {[
+                  { label: isRtl ? 'إجمالي المصاريف' : 'Total Fees', value: `${feeSummary.total.toLocaleString()} EGP`, color: '#0a5c36', icon: '💳' },
+                  { label: isRtl ? 'المدفوع' : 'Paid', value: `${feeSummary.paid.toLocaleString()} EGP`, color: '#16a34a', icon: '✅' },
+                  { label: isRtl ? 'المتبقي' : 'Remaining', value: `${feeSummary.remaining.toLocaleString()} EGP`, color: feeSummary.remaining > 0 ? '#dc2626' : '#16a34a', icon: feeSummary.remaining > 0 ? '⚠️' : '✓' },
+                ].map(s => (
+                  <div key={s.label} className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>{s.icon}</div>
+                    <div style={{ fontSize: '1.3rem', fontWeight: 900, color: s.color }}>{s.value}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600, marginTop: '4px' }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Fee records */}
+              {fees.length === 0 ? (
+                <div className="card" style={{ padding: '60px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '12px' }}>💰</div>
+                  <div style={{ color: '#64748b' }}>{isRtl ? 'لا توجد سجلات مصاريف بعد' : 'No fee records yet'}</div>
+                </div>
+              ) : (
+                <div className="card" style={{ overflow: 'hidden' }}>
+                  {fees.map((fee, i) => (
+                    <div key={fee.id} style={{ padding: '16px 20px', borderTop: i > 0 ? '1px solid #f1f5f9' : 'none', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>
+                          {isRtl ? 'مصاريف' : 'Fees'} — {fee.academicYear}
+                        </div>
+                        {fee.notes && <div style={{ color: '#64748b', fontSize: '0.82rem', marginTop: '2px' }}>{fee.notes}</div>}
+                        <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '4px' }}>
+                          {new Date(fee.createdAt).toLocaleDateString(isRtl ? 'ar-EG' : 'en-GB')}
+                          {fee.paidAt && ` · ${isRtl ? 'دُفع في' : 'Paid on'}: ${new Date(fee.paidAt).toLocaleDateString(isRtl ? 'ar-EG' : 'en-GB')}`}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: isRtl ? 'left' : 'right' }}>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>{fee.amount.toLocaleString()} EGP</div>
+                        <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '999px', fontWeight: 700, background: fee.isPaid ? '#f0fdf4' : '#fef9c3', color: fee.isPaid ? '#15803d' : '#92400e' }}>
+                          {fee.isPaid ? (isRtl ? '✓ مدفوع' : '✓ Paid') : (isRtl ? '⏳ غير مدفوع' : '⏳ Unpaid')}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>

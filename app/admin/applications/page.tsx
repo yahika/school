@@ -28,14 +28,52 @@ export default function ApplicationsAdmin() {
   const [loadingId, setLoadingId] = useState<number | null>(null)
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
   const [selected, setSelected] = useState<Application | null>(null)
+  const [checked, setChecked] = useState<number[]>([])
+  const [bulkLoading, setBulkLoading] = useState(false)
 
   async function load() {
     try {
       const d = await fetch('/api/admin/applications').then(r => r.json())
       setApps(d.applications ?? [])
+      setChecked([])
     } catch {
       showToast('فشل تحميل الطلبات', false)
     }
+  }
+
+  function toggleCheck(id: number) {
+    setChecked(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  }
+
+  function toggleAll() {
+    if (checked.length === filtered.length) setChecked([])
+    else setChecked(filtered.map(a => a.id))
+  }
+
+  async function bulkAction(action: 'accept' | 'reject' | 'delete') {
+    if (!checked.length) return
+    if (action === 'delete' && !confirm(`حذف ${checked.length} طلب نهائياً؟`)) return
+    setBulkLoading(true)
+    try {
+      const res = await fetch('/api/admin/applications/bulk', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: checked, action }),
+      })
+      const d = await res.json()
+      if (action === 'accept') {
+        setApps(prev => prev.map(a => checked.includes(a.id) ? { ...a, status: 'accepted' } : a))
+        showToast(`✅ تم قبول ${d.affected} طلب وإرسال الإيميلات`, true)
+      } else if (action === 'reject') {
+        setApps(prev => prev.map(a => checked.includes(a.id) ? { ...a, status: 'rejected' } : a))
+        showToast(`❌ تم رفض ${d.affected} طلب`, false)
+      } else {
+        setApps(prev => prev.filter(a => !checked.includes(a.id)))
+        showToast(`🗑 تم حذف ${d.affected} طلب`, false)
+      }
+      setChecked([])
+    } catch {
+      showToast('حدث خطأ في العملية', false)
+    } finally { setBulkLoading(false) }
   }
 
   // Load on mount + auto-refresh every 15 seconds
@@ -265,23 +303,63 @@ export default function ApplicationsAdmin() {
         ))}
       </div>
 
+      {/* Bulk action toolbar */}
+      {checked.length > 0 && (
+        <div style={{ background: '#0a5c36', borderRadius: '12px', padding: '12px 20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>✓ تم تحديد {checked.length} طلب</span>
+          <div style={{ display: 'flex', gap: '8px', marginRight: 'auto', flexWrap: 'wrap' }}>
+            <button onClick={() => bulkAction('accept')} disabled={bulkLoading} style={{ padding: '7px 18px', borderRadius: '8px', background: '#f0fdf4', color: '#15803d', border: 'none', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
+              ✅ قبول الكل
+            </button>
+            <button onClick={() => bulkAction('reject')} disabled={bulkLoading} style={{ padding: '7px 18px', borderRadius: '8px', background: '#fef2f2', color: '#dc2626', border: 'none', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
+              ❌ رفض الكل
+            </button>
+            <button onClick={() => bulkAction('delete')} disabled={bulkLoading} style={{ padding: '7px 18px', borderRadius: '8px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
+              🗑 حذف الكل
+            </button>
+            <button onClick={() => setChecked([])} style={{ padding: '7px 14px', borderRadius: '8px', background: 'transparent', color: 'rgba(255,255,255,0.6)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
+              إلغاء
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Select all row */}
+      {filtered.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 4px', marginBottom: '4px' }}>
+          <input type="checkbox" checked={checked.length === filtered.length && filtered.length > 0} onChange={toggleAll} style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: '#0a5c36' }} />
+          <span style={{ color: '#64748b', fontSize: '0.82rem', fontWeight: 600 }}>
+            {checked.length === filtered.length && filtered.length > 0 ? 'إلغاء تحديد الكل' : `تحديد الكل (${filtered.length})`}
+          </span>
+        </div>
+      )}
+
       {/* List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {filtered.map(app => (
           <div
             key={app.id}
             style={{
-              background: 'white', borderRadius: '12px', padding: '20px',
-              border: '1px solid #e2e8f0', cursor: 'pointer',
+              background: checked.includes(app.id) ? '#f0fdf4' : 'white',
+              borderRadius: '12px', padding: '20px',
+              border: checked.includes(app.id) ? '1.5px solid #0a5c36' : '1px solid #e2e8f0',
+              cursor: 'pointer',
               opacity: loadingId === app.id ? 0.6 : 1,
               transition: 'all 0.15s',
               boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              display: 'flex', gap: '12px', alignItems: 'flex-start',
             }}
-            onClick={() => setSelected(app)}
             onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 16px rgba(10,92,54,0.12)')}
             onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.04)')}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+            {/* Checkbox */}
+            <div onClick={e => { e.stopPropagation(); toggleCheck(app.id) }} style={{ paddingTop: '2px', flexShrink: 0 }}>
+              <input type="checkbox" checked={checked.includes(app.id)} onChange={() => toggleCheck(app.id)}
+                style={{ width: '17px', height: '17px', cursor: 'pointer', accentColor: '#0a5c36' }} />
+            </div>
+
+            {/* Content */}
+            <div onClick={() => setSelected(app)} style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1e293b' }}>
                   {app.studentNameAr}
@@ -296,10 +374,7 @@ export default function ApplicationsAdmin() {
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
-                <span style={{
-                  padding: '4px 12px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 600,
-                  background: statusColors[app.status]?.bg, color: statusColors[app.status]?.color,
-                }}>
+                <span style={{ padding: '4px 12px', borderRadius: '999px', fontSize: '0.8rem', fontWeight: 600, background: statusColors[app.status]?.bg, color: statusColors[app.status]?.color }}>
                   {loadingId === app.id ? '...' : statusColors[app.status]?.label}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>انقر للتفاصيل ←</span>

@@ -131,6 +131,22 @@ model ContactMessage {
   createdAt DateTime @default(now())
 }
 
+model CalendarEvent {
+  id          Int      @id @default(autoincrement())
+  titleAr     String
+  titleEn     String
+  date        String   // YYYY-MM-DD
+  endDate     String?  // YYYY-MM-DD for multi-day events
+  type        String   // exam | holiday | event | term | meeting
+  color       String?
+  descriptionAr String?
+  descriptionEn String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+}
+
 model ParentAccount {
   id           Int      @id @default(autoincrement())
   name         String

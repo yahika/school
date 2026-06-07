@@ -6,6 +6,7 @@ interface Parent { id: number; name: string; email: string; phone: string; stude
 export default function ParentsAdmin() {
   const [parents, setParents] = useState<Parent[]>([])
   const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState<'all'|'pending'|'active'>('pending')
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
 
   function showToast(msg: string, ok = true) { setToast({ msg, ok }); setTimeout(() => setToast(null), 3000) }
@@ -29,7 +30,9 @@ export default function ParentsAdmin() {
     showToast('تم الحذف', false)
   }
 
-  const filtered = parents.filter(p =>
+  const pending = parents.filter(p => !p.isActive)
+  const byFilter = filter === 'all' ? parents : filter === 'pending' ? parents.filter(p => !p.isActive) : parents.filter(p => p.isActive)
+  const filtered = byFilter.filter(p =>
     p.name.includes(search) || p.email.includes(search) ||
     p.studentName.includes(search) || p.seatNumber.includes(search)
   )
@@ -47,6 +50,33 @@ export default function ParentsAdmin() {
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث بالاسم أو البريد أو رقم الجلوس"
           style={{ marginRight: 'auto', padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.88rem', minWidth: '260px' }} />
         <button onClick={load} style={{ padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem', color: '#64748b' }}>🔄</button>
+      </div>
+
+      {/* Pending banner */}
+      {pending.length > 0 && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '14px', padding: '16px 20px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '1.5rem' }}>⏳</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, color: '#92400e', fontSize: '0.95rem' }}>{pending.length} حساب في انتظار الموافقة</div>
+            <div style={{ color: '#b45309', fontSize: '0.82rem', marginTop: '2px' }}>راجع الطلبات أدناه وفعّل أو ارفض كل حساب</div>
+          </div>
+          <button onClick={() => setFilter('pending')} style={{ padding: '8px 18px', background: '#d97706', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
+            عرض الطلبات
+          </button>
+        </div>
+      )}
+
+      {/* Filter tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        {[
+          { key: 'pending', label: `انتظار الموافقة (${pending.length})`, color: '#d97706' },
+          { key: 'active', label: `نشط (${parents.filter(p=>p.isActive).length})`, color: '#0a5c36' },
+          { key: 'all', label: `الكل (${parents.length})`, color: '#64748b' },
+        ].map(f => (
+          <button key={f.key} onClick={() => setFilter(f.key as typeof filter)} style={{ padding: '7px 16px', borderRadius: '999px', border: '2px solid', borderColor: filter === f.key ? f.color : '#e2e8f0', background: filter === f.key ? f.color : 'white', color: filter === f.key ? 'white' : '#64748b', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem', transition: 'all 0.15s' }}>
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {/* Stats */}

@@ -3,12 +3,16 @@ import { useState, useEffect } from 'react'
 
 interface Student { seatNumber: string; nameAr: string; nameEn: string; gradeAr: string; totalResults: number; latestPct: number; latestStatus: string }
 
+function downloadPDF(resultId: number, seatNumber: string) {
+  window.open(`/api/admin/report-card/${resultId}`, '_blank')
+}
+
 export default function StudentsAdmin() {
   const [students, setStudents] = useState<Student[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Student | null>(null)
-  const [results, setResults] = useState<{semester: {nameAr:string}; percentage: number; status: string; totalScore: number; maxScore: number; letterGrade: string}[]>([])
+  const [results, setResults] = useState<{id: number; semester: {nameAr:string}; percentage: number; status: string; totalScore: number; maxScore: number; letterGrade: string}[]>([])
 
   useEffect(() => {
     fetch('/api/admin/students')
@@ -111,11 +115,16 @@ export default function StudentsAdmin() {
                         <div style={{ height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${r.percentage}%`, background: r.percentage >= 85 ? '#0a5c36' : r.percentage >= 60 ? '#d97706' : '#dc2626', borderRadius: '999px' }} />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                           <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{r.totalScore}/{r.maxScore}</span>
-                          <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 700, background: r.status === 'pass' ? '#f0fdf4' : '#fef2f2', color: r.status === 'pass' ? '#15803d' : '#dc2626' }}>
-                            {r.status === 'pass' ? 'ناجح' : 'راسب'}
-                          </span>
+                          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '999px', fontWeight: 700, background: r.status === 'pass' ? '#f0fdf4' : '#fef2f2', color: r.status === 'pass' ? '#15803d' : '#dc2626' }}>
+                              {r.status === 'pass' ? 'ناجح' : 'راسب'}
+                            </span>
+                            <button onClick={(e) => { e.stopPropagation(); downloadPDF(r.id, selected!.seatNumber) }} style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '6px', border: '1px solid #0a5c36', color: '#0a5c36', background: 'white', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600 }}>
+                              📄 PDF
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

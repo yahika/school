@@ -305,6 +305,7 @@ export default function AdminDashboard() {
             { href: '/admin/fees', icon: '💰', label: 'المصاريف', count: null, badge: null, color: '#c8972b' },
             { href: '/admin/parents', icon: '👨‍👩‍👧', label: 'أولياء الأمور', count: null, badge: null, color: '#7c3aed' },
             { href: '/admin/students', icon: '👨‍🎓', label: 'دليل الطلاب', count: null, badge: null, color: '#0369a1' },
+            { href: '/admin/whatsapp', icon: '💬', label: 'بوت واتساب', count: null, badge: null, color: '#16a34a' },
           ].map(link => (
             <a key={link.href} href={link.href} style={{
               display: 'flex', flexDirection: 'column', gap: '8px',

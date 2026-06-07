@@ -12,12 +12,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'أدخل البريد الإلكتروني وكلمة المرور' }, { status: 400 })
 
     const parent = await prisma.parentAccount.findUnique({ where: { email } })
-    if (!parent || !parent.isActive)
+    if (!parent)
       return NextResponse.json({ error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' }, { status: 401 })
 
     const valid = await bcrypt.compare(password, parent.password)
     if (!valid)
       return NextResponse.json({ error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة' }, { status: 401 })
+
+    // Separate message for pending approval
+    if (!parent.isActive)
+      return NextResponse.json({ error: 'PENDING_APPROVAL', studentName: parent.studentName }, { status: 403 })
 
     const token = await new SignJWT({ parentId: parent.id, email: parent.email, seatNumber: parent.seatNumber })
       .setProtectedHeader({ alg: 'HS256' })
