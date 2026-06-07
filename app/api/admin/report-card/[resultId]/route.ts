@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-// @ts-expect-error pdfkit types
+// @ts-ignore
 import PDFDocument from 'pdfkit'
 
 export async function GET(_req: NextRequest, { params }: { params: { resultId: string } }) {
