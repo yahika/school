@@ -78,7 +78,7 @@ export default function NewsPage() {
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[1,2,3].map(i => (
-              <div key={i} style={{ background: 'white', borderRadius: '16px', height: '140px', border: '1px solid #e2e8f0', background: 'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
+              <div key={i} style={{ borderRadius: '16px', height: '140px', border: '1px solid #e2e8f0', background: 'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
             ))}
           </div>
         ) : items.length === 0 ? (
