@@ -7,7 +7,7 @@ const content = {
   ar: {
     nav: {
       home: 'الرئيسية', results: 'النتائج', apply: 'التسجيل',
-      news: 'الأخبار', contact: 'تواصل معنا', admin: 'الإدارة', lang: 'English',
+      news: 'الإعلانات', schedule: 'جدول الامتحانات', contact: 'تواصل معنا', admin: 'الإدارة', lang: 'English',
     },
     hero: {
       badge: 'مدرسة أمريكية معتمدة',
@@ -64,7 +64,7 @@ const content = {
   en: {
     nav: {
       home: 'Home', results: 'Results', apply: 'Apply',
-      news: 'News', contact: 'Contact', admin: 'Admin', lang: 'عربي',
+      news: 'Announcements', schedule: 'Exam Schedule', contact: 'Contact', admin: 'Admin', lang: 'عربي',
     },
     hero: {
       badge: 'Accredited American School',
@@ -165,6 +165,8 @@ export default function HomePage() {
           {[
             { label: L.nav.results, href: '/results' },
             { label: L.nav.apply, href: '/apply' },
+            { label: L.nav.news, href: '/news' },
+            { label: L.nav.schedule, href: '/schedule' },
             { label: L.nav.contact, href: '#contact' },
           ].map(link => (
             <a key={link.href} href={link.href} style={{

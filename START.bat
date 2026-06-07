@@ -29,22 +29,16 @@ echo  [OK] Node.js found:
 node --version
 echo.
 
-:: Install dependencies (only if node_modules missing)
-if not exist "node_modules" (
-    echo  [Step 1/4] Installing dependencies... (this takes 1-2 minutes)
+:: Install dependencies
+echo  [Step 1/4] Installing dependencies...
+call npm install
+if %errorlevel% neq 0 (
     echo.
-    call npm install
-    if %errorlevel% neq 0 (
-        echo.
-        echo  [ERROR] npm install failed. Check your internet connection.
-        pause
-        exit /b 1
-    )
-    echo.
-    echo  [OK] Dependencies installed!
-) else (
-    echo  [Step 1/4] Dependencies already installed. Skipping.
+    echo  [ERROR] npm install failed. Check your internet connection.
+    pause
+    exit /b 1
 )
+echo  [OK] Dependencies installed!
 
 echo.
 
