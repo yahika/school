@@ -21,6 +21,8 @@ export default function ParentDashboard() {
   const [fees, setFees] = useState<FeeRecord[]>([])
   const [feeSummary, setFeeSummary] = useState<FeeSummary>({ total: 0, paid: 0, remaining: 0 })
   const [loading, setLoading] = useState(true)
+  const [payingFeeId, setPayingFeeId] = useState<number | null>(null)
+  const [payError, setPayError] = useState<string | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem('lang') as 'ar'|'en' | null
@@ -61,6 +63,29 @@ export default function ParentDashboard() {
   function toggleLang() {
     const next = lang === 'ar' ? 'en' : 'ar'
     setLang(next); localStorage.setItem('lang', next)
+  }
+
+  /** Starts a real online payment (card / Apple Pay / wallets via Paymob) and redirects to the hosted checkout. */
+  async function payNow(feeRecordId: number) {
+    setPayError(null)
+    setPayingFeeId(feeRecordId)
+    try {
+      const res = await fetch('/api/parent/payments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feeRecordId }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.checkoutUrl) {
+        setPayError(data.error || (isRtl ? 'تعذر بدء عملية الدفع' : 'Could not start the payment'))
+        setPayingFeeId(null)
+        return
+      }
+      window.location.href = data.checkoutUrl
+    } catch {
+      setPayError(isRtl ? 'تعذر الاتصال بالخادم — تحقق من الإنترنت' : 'Could not reach the server — check your connection')
+      setPayingFeeId(null)
+    }
   }
 
   if (loading) return (
@@ -396,9 +421,20 @@ export default function ParentDashboard() {
           {/* FEES */}
           {activeTab === 'fees' && (
             <div>
-              <h2 style={{ fontWeight: 800, color: '#0f172a', marginBottom: '20px', fontSize: '1.3rem' }}>
+              <h2 style={{ fontWeight: 800, color: '#0f172a', marginBottom: '6px', fontSize: '1.3rem' }}>
                 💰 {isRtl ? 'المصاريف الدراسية' : 'School Fees'}
               </h2>
+              <div style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '18px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                🔒 {isRtl
+                  ? 'الدفع الإلكتروني الآمن متاح عبر Visa وMastercard وApple Pay والمحافظ الإلكترونية'
+                  : 'Secure online payment via Visa, Mastercard, Apple Pay, and e-wallets'}
+              </div>
+
+              {payError && (
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px', fontSize: '0.85rem', fontWeight: 600 }}>
+                  ⚠️ {payError}
+                </div>
+              )}
 
               {/* Summary cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
@@ -440,6 +476,25 @@ export default function ParentDashboard() {
                         <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '999px', fontWeight: 700, background: fee.isPaid ? '#f0fdf4' : '#fef9c3', color: fee.isPaid ? '#15803d' : '#92400e' }}>
                           {fee.isPaid ? (isRtl ? '✓ مدفوع' : '✓ Paid') : (isRtl ? '⏳ غير مدفوع' : '⏳ Unpaid')}
                         </span>
+                        {!fee.isPaid && (
+                          <div style={{ marginTop: '8px' }}>
+                            <button
+                              onClick={() => payNow(fee.id)}
+                              disabled={payingFeeId !== null}
+                              style={{
+                                background: payingFeeId === fee.id ? '#94a3b8' : 'linear-gradient(135deg,#0a5c36,#0d7a45)',
+                                color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px',
+                                fontSize: '0.8rem', fontWeight: 700, cursor: payingFeeId !== null ? 'default' : 'pointer',
+                                fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                opacity: payingFeeId !== null && payingFeeId !== fee.id ? 0.5 : 1,
+                              }}
+                            >
+                              {payingFeeId === fee.id
+                                ? (isRtl ? '⏳ جارِ التحويل...' : '⏳ Redirecting...')
+                                : (isRtl ? '💳 ادفع الآن' : '💳 Pay Now')}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}

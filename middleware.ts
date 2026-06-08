@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminFromRequest } from '@/lib/auth'
+import { getStaffFromRequest, departmentHref } from '@/lib/staffAuth'
 import { jwtVerify } from 'jose'
 
 const parentSecret = new TextEncoder().encode(process.env.JWT_SECRET ?? 'parent-secret-key')
@@ -16,6 +17,26 @@ export async function middleware(request: NextRequest) {
     if (!admin) {
       if (isAdminApi) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
       return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+    return NextResponse.next()
+  }
+
+  // ── Staff portal protection ──────────────────────────────────────────────────
+  const isStaffPage = pathname.startsWith('/staff') && pathname !== '/staff/login'
+  const isStaffApi  = pathname.startsWith('/api/staff') && pathname !== '/api/staff/login'
+
+  if (isStaffPage || isStaffApi) {
+    const staff = await getStaffFromRequest(request)
+    if (!staff) {
+      if (isStaffApi) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.redirect(new URL('/staff/login', request.url))
+    }
+    // Department isolation — a staff member may only open their own department's pages
+    if (isStaffPage) {
+      const ownHref = departmentHref(staff.department)
+      if (!pathname.startsWith(ownHref)) {
+        return NextResponse.redirect(new URL(ownHref, request.url))
+      }
     }
     return NextResponse.next()
   }
@@ -37,5 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/parent/dashboard/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/staff/:path*', '/api/staff/:path*', '/parent/dashboard/:path*'],
 }

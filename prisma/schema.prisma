@@ -26,6 +26,7 @@ model Semester {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   results      Result[]
+  resultReview ResultReview?
 }
 
 model Result {
@@ -119,6 +120,30 @@ model FeeRecord {
   academicYear String
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  payments     Payment[]
+}
+
+// Online payment attempts/transactions for fees, processed via Paymob
+model Payment {
+  id                  Int            @id @default(autoincrement())
+  feeRecordId         Int
+  feeRecord           FeeRecord      @relation(fields: [feeRecordId], references: [id], onDelete: Cascade)
+  parentAccountId     Int?
+  parentAccount       ParentAccount? @relation(fields: [parentAccountId], references: [id])
+  seatNumber          String
+  amountCents         Int
+  currency            String         @default("EGP")
+  status              String         @default("pending") // pending | success | failed
+  specialReference    String         @unique // our correlation id, sent to & echoed back by Paymob
+  paymobOrderId       String?
+  paymobTransactionId String?
+  rawCallback         String?        // last raw callback payload (JSON string), kept for audits
+  paidAt              DateTime?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([seatNumber])
+  @@index([status])
 }
 
 model ContactMessage {
@@ -160,7 +185,186 @@ model ParentAccount {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  payments     Payment[]
 
   @@index([email])
   @@index([seatNumber])
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Internal staff portals — 5 departments, each with its own login
+//   student_affairs | buses | accounts | results_control | inventory
+// ════════════════════════════════════════════════════════════════════════════
+model Staff {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  name       String
+  department String   // student_affairs | buses | accounts | results_control | inventory
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ── سيستم شؤون الطلبة ────────────────────────────────────────────────────────
+model StudentFile {
+  id               Int      @id @default(autoincrement())
+  seatNumber       String   @unique
+  nameAr           String
+  nameEn           String?
+  gradeAr          String
+  gradeEn          String?
+  nationalId       String?
+  dateOfBirth      String?
+  address          String?
+  guardianName     String?
+  guardianPhone    String?
+  guardianRelation String?
+  emergencyPhone   String?
+  medicalNotes     String?
+  enrollDate       String?
+  status           String   @default("active") // active | transferred | withdrawn | graduated
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([seatNumber])
+  @@index([nameAr])
+}
+
+model AttendanceRecord {
+  id          Int      @id @default(autoincrement())
+  seatNumber  String
+  studentName String
+  gradeAr     String
+  date        String   // YYYY-MM-DD
+  status      String   // present | absent | late | excused
+  notes       String?
+  recordedBy  String?
+  createdAt   DateTime @default(now())
+
+  @@unique([seatNumber, date])
+  @@index([date])
+  @@index([seatNumber])
+}
+
+model ConductNote {
+  id          Int      @id @default(autoincrement())
+  seatNumber  String
+  studentName String
+  gradeAr     String
+  date        String   // YYYY-MM-DD
+  type        String   // positive | negative | note
+  description String
+  recordedBy  String?
+  createdAt   DateTime @default(now())
+
+  @@index([seatNumber])
+  @@index([date])
+}
+
+// ── باصات ────────────────────────────────────────────────────────────────────
+model Bus {
+  id              Int        @id @default(autoincrement())
+  code            String     @unique
+  plateNumber     String?
+  driverName      String?
+  driverPhone     String?
+  supervisorName  String?
+  supervisorPhone String?
+  capacity        Int        @default(0)
+  routeAr         String?
+  routeEn         String?
+  stops           String?    // newline/comma separated stop names
+  monthlyFee      Float?
+  status          String     @default("active") // active | maintenance | inactive
+  notes           String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  riders          BusRider[]
+}
+
+model BusRider {
+  id          Int      @id @default(autoincrement())
+  busId       Int
+  bus         Bus      @relation(fields: [busId], references: [id], onDelete: Cascade)
+  seatNumber  String
+  studentName String
+  gradeAr     String
+  pickupPoint String?
+  phone       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([busId])
+  @@index([seatNumber])
+}
+
+// ── حسابات الماليات ──────────────────────────────────────────────────────────
+// Income is read live from the existing FeeRecord/Payment data; this is the
+// department's own ledger for everything on the spending side.
+model Expense {
+  id          Int      @id @default(autoincrement())
+  date        String   // YYYY-MM-DD
+  category    String   // رواتب | مرافق | صيانة | مستلزمات | مواصلات | أخرى
+  description String
+  amount      Float
+  paidTo      String?
+  notes       String?
+  recordedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([date])
+  @@index([category])
+}
+
+// ── كونترول نتايج ────────────────────────────────────────────────────────────
+// One review record per semester — tracks the control department's QA pass
+// over results that are already (or about to be) published to parents.
+model ResultReview {
+  id         Int       @id @default(autoincrement())
+  semesterId Int       @unique
+  semester   Semester  @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  status     String    @default("pending") // pending | approved | needs_changes
+  note       String?
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// ── مخازن، كتب، يونيفورم ─────────────────────────────────────────────────────
+model InventoryItem {
+  id           Int             @id @default(autoincrement())
+  nameAr       String
+  nameEn       String?
+  category     String          // كتب | يونيفورم | قرطاسية | أخرى
+  sku          String?
+  quantity     Int             @default(0)
+  unit         String          @default("قطعة")
+  minThreshold Int             @default(0)
+  unitPrice    Float?
+  supplier     String?
+  notes        String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  movements    StockMovement[]
+
+  @@index([category])
+}
+
+model StockMovement {
+  id         Int           @id @default(autoincrement())
+  itemId     Int
+  item       InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  type       String        // in | out
+  quantity   Int
+  date       String        // YYYY-MM-DD
+  reason     String?
+  recordedBy String?
+  createdAt  DateTime      @default(now())
+
+  @@index([itemId])
+  @@index([date])
 }
