@@ -34,9 +34,10 @@ export default function AdminLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
+      const data = await res.json()
 
-      if (res.ok) {
-        router.push('/admin/dashboard')
+      if (res.ok && data.success) {
+        router.push(data.redirectTo || '/admin/dashboard')
         router.refresh()
       } else {
         setError(L.error)
