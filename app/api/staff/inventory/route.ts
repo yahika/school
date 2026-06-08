@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 
-export const INVENTORY_CATEGORIES = ['كتب', 'يونيفورم', 'قرطاسية', 'أخرى']
+const INVENTORY_CATEGORIES = ['كتب', 'يونيفورم', 'قرطاسية', 'أخرى']
 
 // GET /api/staff/inventory?search=&category=&lowStock=1 — list inventory items
 export async function GET(req: NextRequest) {

@@ -4,7 +4,7 @@ import { getStaffFromCookies } from '@/lib/staffAuth'
 
 export const dynamic = 'force-dynamic'
 
-export const EXPENSE_CATEGORIES = ['رواتب', 'مرافق', 'صيانة', 'مستلزمات', 'مواصلات', 'أخرى']
+const EXPENSE_CATEGORIES = ['رواتب', 'مرافق', 'صيانة', 'مستلزمات', 'مواصلات', 'أخرى']
 
 export async function GET(req: NextRequest) {
   const search = req.nextUrl.searchParams.get('search')?.trim()
