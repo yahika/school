@@ -1,14 +1,16 @@
 'use client'
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
 
-type TabKey = 'overview' | 'fleet' | 'riders'
+type TabKey = 'overview' | 'fleet' | 'riders' | 'import'
 type Notify = (msg: string, type?: 'success' | 'error') => void
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'نظرة عامة' },
   { key: 'fleet', label: 'الباصات' },
   { key: 'riders', label: 'الركاب' },
+  { key: 'import', label: '📥 استيراد Excel' },
 ]
 
 const BUS_STATUS_META: Record<string, { label: string; color: string; bg: string }> = {
@@ -173,6 +175,19 @@ function FleetTab({ notify, onManageRiders }: { notify: Notify; onManageRiders: 
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState<BusForm>(EMPTY_BUS_FORM)
   const [saving, setSaving] = useState(false)
+  const [notifying, setNotifying] = useState<number | null>(null)
+
+  async function notifyDelay(busId: number, code: string) {
+    const msg = prompt(`رسالة التأخير (اتركها فارغة للرسالة الافتراضية):\nمثال: سيتأخر الباص ${code} بسبب الازدحام`, '')
+    if (msg === null) return   // user cancelled
+    setNotifying(busId)
+    try {
+      const res = await fetch('/api/staff/buses/notify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ busId, message: msg || undefined }) })
+      const d = await res.json()
+      if (res.ok) notify(`تم إرسال الإشعار إلى ${d.sent} من ${d.total} ولي أمر`)
+      else notify(d.error || 'فشل الإرسال', 'error')
+    } finally { setNotifying(null) }
+  }
 
   const load = useCallback(() => {
     setLoading(true)
@@ -244,9 +259,10 @@ function FleetTab({ notify, onManageRiders }: { notify: Notify; onManageRiders: 
                     <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>راكب</div>
                   </div>
                   <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '4px 12px', borderRadius: '999px', background: m.bg, color: m.color }}>{m.label}</span>
-                  <div style={{ display: 'flex', gap: '6px' }}>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                     <button onClick={() => onManageRiders(b.id)} className="btn-outline btn-sm">👥 الركاب</button>
                     <button onClick={() => openEdit(b)} className="btn-outline btn-sm">تعديل</button>
+                    <button onClick={() => notifyDelay(b.id, b.code)} disabled={notifying === b.id} className="btn-outline btn-sm" title="إرسال WhatsApp لأولياء الأمور">{notifying === b.id ? '...' : '📲 تأخير'}</button>
                     <button onClick={() => remove(b)} className="btn-danger btn-sm">حذف</button>
                   </div>
                 </div>
@@ -439,6 +455,122 @@ function RidersTab({ notify, selectedBusId, setSelectedBusId }: { notify: Notify
 }
 
 // ============================================================
+// Excel Import (Riders)
+// ============================================================
+const RIDER_COLS = ['busCode','seatNumber','studentName','gradeAr','pickupPoint','phone']
+const RIDER_HEADERS: Record<string,string> = { busCode:'كود الباص*', seatNumber:'رقم الجلوس*', studentName:'اسم الطالب*', gradeAr:'الصف*', pickupPoint:'نقطة الركوب', phone:'رقم الهاتف' }
+
+function BusImportTab({ notify }: { notify: Notify }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [preview, setPreview] = useState<Record<string,string>[]>([])
+  const [fileName, setFileName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState<{ created: number; updated: number; errors: string[] } | null>(null)
+
+  function parseFile(file: File) {
+    setResult(null)
+    const reader = new FileReader()
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target!.result as ArrayBuffer), { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      if (rows.length < 2) { notify('الملف فارغ أو لا يحتوي على بيانات', 'error'); return }
+      const parsed: Record<string,string>[] = []
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] as string[]
+        if (!r[0] && !r[1]) continue
+        const obj: Record<string,string> = {}
+        RIDER_COLS.forEach((col, idx) => { obj[col] = String(r[idx] ?? '').trim() })
+        parsed.push(obj)
+      }
+      setPreview(parsed); setFileName(file.name)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function doImport() {
+    if (!preview.length) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/buses/riders/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ riders: preview }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم: ${d.created} جديد، ${d.updated} محدَّث`)
+      else notify(d.error || 'فشل الاستيراد', 'error')
+    } finally { setSaving(false) }
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([RIDER_COLS.map(c => RIDER_HEADERS[c]), ['B-01','1001','أحمد محمد','الصف الأول','مدخل المدينة','01012345678']])
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الركاب')
+    XLSX.writeFile(wb, 'نموذج_استيراد_ركاب_الباصات.xlsx')
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <div style={{ fontWeight: 800, color: '#0f172a' }}>📥 استيراد ركاب من Excel</div>
+            <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '3px' }}>العمود الأول يجب أن يحتوي على كود الباص (مثال: B-01)</div>
+          </div>
+          <button onClick={downloadTemplate} className="btn-outline btn-sm">⬇️ تحميل النموذج</button>
+        </div>
+        <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
+          onClick={() => fileRef.current?.click()}
+          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
+          <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
+          <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
+          <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '4px' }}>.xlsx · .xls · .csv</div>
+        </div>
+      </div>
+
+      {preview.length > 0 && (
+        <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ fontWeight: 700, color: '#0f172a' }}>معاينة — {preview.length} راكب</div>
+            <button onClick={doImport} disabled={saving} className="btn-primary">
+              {saving ? <><span className="spinner" /> جارٍ الاستيراد...</> : `✅ استيراد ${preview.length} راكب`}
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+              <thead><tr style={{ background: '#f1f5f9' }}>
+                {['الباص','رقم الجلوس','اسم الطالب','الصف'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'start', fontWeight: 700, color: '#475569', whiteSpace: 'nowrap' }}>{h}</th>)}
+              </tr></thead>
+              <tbody>{preview.slice(0, 10).map((r, i) => (
+                <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#0a5c36' }}>{r.busCode}</td>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.seatNumber}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.studentName}</td>
+                  <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+            {preview.length > 10 && <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.78rem' }}>+{preview.length - 10} صفوف أخرى</div>}
+          </div>
+        </div>
+      )}
+
+      {result && (
+        <div className="card" style={{ padding: '18px 20px', borderColor: result.errors.length ? '#fca5a5' : '#86efac' }}>
+          <div style={{ fontWeight: 800, marginBottom: '8px' }}>نتيجة الاستيراد</div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: result.errors.length ? '12px' : 0 }}>
+            <span style={{ color: '#15803d' }}>✅ جديد: <strong>{result.created}</strong></span>
+            <span style={{ color: '#2563eb' }}>🔄 محدَّث: <strong>{result.updated}</strong></span>
+            {result.errors.length > 0 && <span style={{ color: '#dc2626' }}>❌ أخطاء: <strong>{result.errors.length}</strong></span>}
+          </div>
+          {result.errors.slice(0, 5).map((e, i) => <div key={i} style={{ fontSize: '0.78rem', color: '#dc2626' }}>• {e}</div>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Page shell
 // ============================================================
 export default function BusesPage() {
@@ -455,6 +587,7 @@ export default function BusesPage() {
       {tab === 'overview' && <OverviewTab />}
       {tab === 'fleet' && <FleetTab notify={notify} onManageRiders={manageRiders} />}
       {tab === 'riders' && <RidersTab notify={notify} selectedBusId={selectedBusId} setSelectedBusId={setSelectedBusId} />}
+      {tab === 'import' && <BusImportTab notify={notify} />}
     </StaffShell>
   )
 }

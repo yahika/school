@@ -1,14 +1,17 @@
 'use client'
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
 
-type TabKey = 'overview' | 'items' | 'movements'
+type TabKey = 'overview' | 'items' | 'movements' | 'import' | 'distribute'
 type Notify = (msg: string, type?: 'success' | 'error') => void
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'نظرة عامة' },
   { key: 'items', label: 'الأصناف' },
   { key: 'movements', label: 'حركة المخزون' },
+  { key: 'import', label: '📥 استيراد Excel' },
+  { key: 'distribute', label: '📋 توزيع على الصفوف' },
 ]
 
 // local copy matching the server export in app/api/staff/inventory/route.ts
@@ -485,6 +488,223 @@ function MovementsTab({ notify, presetItemId, onConsumePreset }: { notify: Notif
 }
 
 // ============================================================
+// Excel Import (Inventory Items)
+// ============================================================
+const INV_COLS = ['nameAr','nameEn','category','sku','quantity','unit','minThreshold','unitPrice','supplier']
+const INV_HEADERS: Record<string,string> = { nameAr:'الاسم عربي*', nameEn:'الاسم إنجليزي', category:'الفئة*', sku:'كود SKU', quantity:'الكمية*', unit:'الوحدة', minThreshold:'حد التنبيه', unitPrice:'سعر الوحدة', supplier:'المورد' }
+
+function InventoryImportTab({ notify }: { notify: Notify }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [preview, setPreview] = useState<Record<string,string>[]>([])
+  const [fileName, setFileName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState<{ created: number; updated: number; errors: string[] } | null>(null)
+
+  function parseFile(file: File) {
+    setResult(null)
+    const reader = new FileReader()
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target!.result as ArrayBuffer), { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      if (rows.length < 2) { notify('الملف فارغ', 'error'); return }
+      const parsed: Record<string,string>[] = []
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] as string[]
+        if (!r[0]) continue
+        const obj: Record<string,string> = {}
+        INV_COLS.forEach((col, idx) => { obj[col] = String(r[idx] ?? '').trim() })
+        parsed.push(obj)
+      }
+      setPreview(parsed); setFileName(file.name)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function doImport() {
+    if (!preview.length) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/inventory/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: preview }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم: ${d.created} جديد، ${d.updated} محدَّث`)
+      else notify(d.error || 'فشل الاستيراد', 'error')
+    } finally { setSaving(false) }
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([INV_COLS.map(c => INV_HEADERS[c]), ['كتاب الرياضيات','Math Book','كتب','BOOK-MATH-1','100','قطعة','10','25','مكتبة النهضة']])
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الأصناف')
+    XLSX.writeFile(wb, 'نموذج_استيراد_المخزون.xlsx')
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <div style={{ fontWeight: 800, color: '#0f172a' }}>📥 استيراد أصناف المخزون من Excel</div>
+            <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '3px' }}>يُضيف الأصناف الجديدة أو يُحدّث الموجودة حسب SKU أو الاسم+الفئة</div>
+          </div>
+          <button onClick={downloadTemplate} className="btn-outline btn-sm">⬇️ تحميل النموذج</button>
+        </div>
+        <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
+          onClick={() => fileRef.current?.click()}
+          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
+          <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📦</div>
+          <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
+          <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '4px' }}>.xlsx · .xls · .csv</div>
+        </div>
+      </div>
+
+      {preview.length > 0 && (
+        <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ fontWeight: 700 }}>معاينة — {preview.length} صنف</div>
+            <button onClick={doImport} disabled={saving} className="btn-primary">
+              {saving ? <><span className="spinner" /> جارٍ الاستيراد...</> : `✅ استيراد ${preview.length} صنف`}
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+              <thead><tr style={{ background: '#f1f5f9' }}>
+                {['الاسم عربي','الفئة','الكمية','الوحدة','سعر الوحدة'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'start', fontWeight: 700, color: '#475569', whiteSpace: 'nowrap' }}>{h}</th>)}
+              </tr></thead>
+              <tbody>{preview.slice(0, 10).map((r, i) => (
+                <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.nameAr}</td>
+                  <td style={{ padding: '7px 12px' }}>{r.category}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#0a5c36' }}>{r.quantity}</td>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.unit || 'قطعة'}</td>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.unitPrice ? `${r.unitPrice} ج.م` : '—'}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+            {preview.length > 10 && <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.78rem' }}>+{preview.length - 10} صفوف أخرى</div>}
+          </div>
+        </div>
+      )}
+
+      {result && (
+        <div className="card" style={{ padding: '18px 20px', borderColor: result.errors.length ? '#fca5a5' : '#86efac' }}>
+          <div style={{ fontWeight: 800, marginBottom: '8px' }}>نتيجة الاستيراد</div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <span style={{ color: '#15803d' }}>✅ جديد: <strong>{result.created}</strong></span>
+            <span style={{ color: '#2563eb' }}>🔄 محدَّث: <strong>{result.updated}</strong></span>
+            {result.errors.length > 0 && <span style={{ color: '#dc2626' }}>❌ أخطاء: <strong>{result.errors.length}</strong></span>}
+          </div>
+          {result.errors.slice(0, 5).map((e, i) => <div key={i} style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '4px' }}>• {e}</div>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// Grade Distribution
+// ============================================================
+function DistributeTab({ notify }: { notify: Notify }) {
+  const [items, setItems] = useState<ItemOption[]>([])
+  const [gradeAr, setGradeAr] = useState('')
+  const [distributing, setDistributing] = useState(false)
+  const [rows, setRows] = useState<{ itemId: number | ''; qty: string }[]>([{ itemId: '', qty: '1' }])
+  const [result, setResult] = useState<{ studentCount: number; results: { nameAr: string; total: number; remaining: number }[] } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/staff/inventory').then(r => r.json()).then(d => {
+      setItems((d.items ?? []).map((i: ItemRow) => ({ id: i.id, nameAr: i.nameAr, category: i.category, quantity: i.quantity, unit: i.unit })))
+    })
+  }, [])
+
+  function addRow() { setRows(r => [...r, { itemId: '', qty: '1' }]) }
+  function removeRow(idx: number) { setRows(r => r.filter((_, i) => i !== idx)) }
+  function setRow(idx: number, key: 'itemId' | 'qty', val: string) {
+    setRows(r => r.map((row, i) => i === idx ? { ...row, [key]: key === 'itemId' ? (val ? Number(val) : '') : val } : row))
+  }
+
+  async function distribute() {
+    if (!gradeAr.trim()) { notify('اكتب اسم الصف أولاً', 'error'); return }
+    const valid = rows.filter(r => r.itemId && Number(r.qty) > 0)
+    if (!valid.length) { notify('أضف صنفًا واحداً على الأقل بكمية أكبر من صفر', 'error'); return }
+    if (!confirm(`توزيع المستلزمات على جميع طلاب ${gradeAr}؟ ستُخصم الكميات فورًا من المخزون.`)) return
+    setDistributing(true)
+    try {
+      const res = await fetch('/api/staff/inventory/distribute', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gradeAr, items: valid.map(r => ({ itemId: r.itemId as number, quantityPerStudent: Number(r.qty) })) }),
+      })
+      const d = await res.json()
+      if (res.ok) { setResult(d); notify(`تم توزيع المستلزمات على ${d.studentCount} طالب`) }
+      else notify(d.error || 'فشل التوزيع', 'error')
+    } finally { setDistributing(false) }
+  }
+
+  function exportResult() {
+    if (!result) return
+    const wsData = [['الصنف','العدد الكلي المُصرف','المتبقي في المخزون']]
+    result.results.forEach(r => wsData.push([r.nameAr, String(r.total), String(r.remaining)]))
+    const ws = XLSX.utils.aoa_to_sheet(wsData)
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'التوزيع')
+    XLSX.writeFile(wb, `توزيع_${gradeAr}_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`)
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '22px', marginBottom: '20px', maxWidth: '600px' }}>
+        <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>📋 توزيع مستلزمات على صف دراسي</div>
+        <div style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '18px' }}>تُحسب الكمية الكلية تلقائيًا × عدد الطلاب النشطين في الصف</div>
+
+        <div style={{ marginBottom: '16px' }}>
+          <label className="form-label">الصف الدراسي *</label>
+          <input className="form-input" value={gradeAr} onChange={e => setGradeAr(e.target.value)} placeholder="مثال: الصف الأول الابتدائي" />
+        </div>
+
+        <div style={{ fontWeight: 700, color: '#374151', fontSize: '0.86rem', marginBottom: '10px' }}>الأصناف</div>
+        {rows.map((row, idx) => (
+          <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+            <select className="form-input" value={row.itemId} onChange={e => setRow(idx, 'itemId', e.target.value)} style={{ flex: 3 }}>
+              <option value="">اختر صنفًا...</option>
+              {items.map(i => <option key={i.id} value={i.id}>{i.nameAr} (رصيد: {i.quantity} {i.unit})</option>)}
+            </select>
+            <input className="form-input" type="number" min="1" value={row.qty} onChange={e => setRow(idx, 'qty', e.target.value)} placeholder="كمية/طالب" style={{ flex: 1, minWidth: '80px' }} />
+            {rows.length > 1 && <button onClick={() => removeRow(idx)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', fontSize: '1.1rem', padding: '0 4px' }}>✕</button>}
+          </div>
+        ))}
+        <button onClick={addRow} className="btn-outline btn-sm" style={{ marginBottom: '18px' }}>+ إضافة صنف آخر</button>
+
+        <button onClick={distribute} disabled={distributing} className="btn-primary" style={{ width: '100%' }}>
+          {distributing ? <><span className="spinner" /> جارٍ التوزيع...</> : '📦 توزيع الآن'}
+        </button>
+      </div>
+
+      {result && (
+        <div className="card" style={{ padding: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ fontWeight: 800, color: '#0f172a' }}>نتيجة التوزيع — {result.studentCount} طالب</div>
+            <button onClick={exportResult} className="btn-outline btn-sm">⬇️ تصدير Excel</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {result.results.map((r, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: r.remaining < 0 ? '#fef2f2' : '#f0fdf4', borderRadius: '10px', border: `1px solid ${r.remaining < 0 ? '#fca5a5' : '#86efac'}` }}>
+                <span style={{ fontWeight: 600, color: '#374151' }}>{r.nameAr}</span>
+                <div style={{ display: 'flex', gap: '16px', fontSize: '0.82rem' }}>
+                  <span>صُرف: <strong>{r.total}</strong></span>
+                  <span style={{ color: r.remaining < 0 ? '#dc2626' : '#15803d' }}>متبقٍ: <strong>{r.remaining}</strong></span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Page shell
 // ============================================================
 export default function InventoryPage() {
@@ -512,6 +732,8 @@ export default function InventoryPage() {
         />
       )}
       {tab === 'movements' && <MovementsTab notify={notify} presetItemId={movementItemId} onConsumePreset={() => setMovementItemId(null)} />}
+      {tab === 'import' && <InventoryImportTab notify={notify} />}
+      {tab === 'distribute' && <DistributeTab notify={notify} />}
     </StaffShell>
   )
 }

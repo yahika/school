@@ -1,14 +1,17 @@
 'use client'
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
 
-type TabKey = 'overview' | 'semesters' | 'results'
+type TabKey = 'overview' | 'semesters' | 'results' | 'rankings' | 'import'
 type Notify = (msg: string, type?: 'success' | 'error') => void
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'overview', label: 'نظرة عامة' },
   { key: 'semesters', label: 'مراجعة الفصول الدراسية' },
   { key: 'results', label: 'نتائج الطلاب' },
+  { key: 'rankings', label: '🏆 الترتيب والإشارات' },
+  { key: 'import', label: '📥 استيراد Excel' },
 ]
 
 const REVIEW_STATUS_META: Record<'pending' | 'approved' | 'needs_changes', { label: string; color: string; bg: string }> = {
@@ -407,6 +410,226 @@ function ResultsTab({ presetSemesterId, onConsumePreset }: { presetSemesterId: n
 }
 
 // ============================================================
+// Rankings + Anomaly Flags
+// ============================================================
+function RankingsTab() {
+  const [semesters, setSemesters] = useState<{ id: number; nameAr: string; academicYear: string; term: string }[]>([])
+  const [semesterId, setSemesterId] = useState<number | ''>('')
+  const [gradeFilter, setGradeFilter] = useState('')
+  const [results, setResults] = useState<ResultRow[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/staff/results-control/semesters').then(r => r.json()).then(d => {
+      const list = (d.semesters ?? []) as SemesterRow[]
+      setSemesters(list.map(s => ({ id: s.id, nameAr: s.nameAr, academicYear: s.academicYear, term: s.term })))
+      if (list.length > 0) setSemesterId(list[0].id)
+    })
+  }, [])
+
+  const load = useCallback(() => {
+    if (!semesterId) { setResults([]); return }
+    setLoading(true)
+    fetch(`/api/staff/results-control/results?semesterId=${semesterId}&limit=500`).then(r => r.json()).then(d => { setResults(d.results ?? []); setLoading(false) }).catch(() => setLoading(false))
+  }, [semesterId])
+  useEffect(() => { load() }, [load])
+
+  const grades = [...new Set(results.map(r => r.gradeAr))].sort()
+  const filtered = gradeFilter ? results.filter(r => r.gradeAr === gradeFilter) : results
+
+  // Sort by percentage desc
+  const ranked = [...filtered].sort((a, b) => b.percentage - a.percentage)
+
+  // Anomaly: score more than 1.5 std devs below mean
+  const mean = ranked.length ? ranked.reduce((s, r) => s + r.percentage, 0) / ranked.length : 0
+  const variance = ranked.length ? ranked.reduce((s, r) => s + Math.pow(r.percentage - mean, 2), 0) / ranked.length : 0
+  const stdDev = Math.sqrt(variance)
+  const anomalyThreshold = mean - 1.5 * stdDev
+
+  const MEDALS = ['🥇','🥈','🥉']
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
+        <select value={semesterId} onChange={e => { setSemesterId(e.target.value ? Number(e.target.value) : ''); setGradeFilter('') }} className="form-input" style={{ minWidth: '230px', padding: '9px 14px' }}>
+          <option value="">اختر فصلاً دراسيًا...</option>
+          {semesters.map(s => <option key={s.id} value={s.id}>{s.nameAr} · {s.academicYear} · {s.term}</option>)}
+        </select>
+        <select value={gradeFilter} onChange={e => setGradeFilter(e.target.value)} className="form-input" style={{ width: 'auto', padding: '9px 14px' }}>
+          <option value="">كل الصفوف</option>
+          {grades.map(g => <option key={g} value={g}>{g}</option>)}
+        </select>
+        {ranked.length > 0 && (
+          <div style={{ color: '#64748b', fontSize: '0.82rem' }}>متوسط الدرجات: <strong>{mean.toFixed(1)}%</strong> · انحراف: {stdDev.toFixed(1)}%</div>
+        )}
+      </div>
+
+      {loading ? <Loading /> : ranked.length === 0 ? <Empty icon="📊" text="اختر فصلاً دراسيًا لعرض الترتيب" /> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {ranked.map((r, idx) => {
+            const isAnomaly = r.percentage < anomalyThreshold && stdDev > 2
+            const m = RESULT_STATUS_META[r.status as keyof typeof RESULT_STATUS_META] ?? RESULT_STATUS_META.fail
+            return (
+              <div key={r.id} style={{ background: isAnomaly ? '#fef2f2' : 'white', borderRadius: '12px', padding: '12px 18px', border: isAnomaly ? '1px solid #fca5a5' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: idx < 3 ? 'transparent' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: idx < 3 ? '1.4rem' : '0.82rem', color: '#64748b', flexShrink: 0 }}>
+                  {idx < 3 ? MEDALS[idx] : `#${idx+1}`}
+                </div>
+                <div style={{ flex: 1, minWidth: '160px' }}>
+                  <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.9rem' }}>{r.nameAr} <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.76rem' }}>· #{r.seatNumber}</span></div>
+                  <div style={{ color: '#64748b', fontSize: '0.76rem' }}>{r.gradeAr}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#0f172a' }}>{r.totalScore} / {r.maxScore}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{r.percentage}%</div>
+                </div>
+                <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '4px 12px', borderRadius: '999px', background: m.bg, color: m.color }}>{m.label}</span>
+                {isAnomaly && <span title="الدرجة أقل بكثير من المتوسط — تحقق من صحة الإدخال" style={{ fontSize: '0.72rem', fontWeight: 700, padding: '4px 12px', borderRadius: '999px', background: '#fef2f2', color: '#dc2626' }}>⚠️ درجة منخفضة</span>}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// Grade Excel Import
+// ============================================================
+const GRADE_COLS = ['seatNumber','nameAr','gradeAr','totalScore','maxScore','letterGrade','status']
+const GRADE_HEADERS: Record<string,string> = { seatNumber:'رقم الجلوس*', nameAr:'الاسم عربي*', gradeAr:'الصف*', totalScore:'المجموع*', maxScore:'أقصى درجة*', letterGrade:'التقدير', status:'الحالة (pass/fail)' }
+
+function GradeImportTab({ notify }: { notify: Notify }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [preview, setPreview] = useState<Record<string,string>[]>([])
+  const [fileName, setFileName] = useState('')
+  const [semesters, setSemesters] = useState<{ id: number; nameAr: string; academicYear: string }[]>([])
+  const [semesterId, setSemesterId] = useState<number | ''>('')
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState<{ created: number; updated: number; errors: string[] } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/staff/results-control/semesters').then(r => r.json()).then(d => {
+      setSemesters((d.semesters ?? []).map((s: SemesterRow) => ({ id: s.id, nameAr: s.nameAr, academicYear: s.academicYear })))
+    })
+  }, [])
+
+  function parseFile(file: File) {
+    setResult(null)
+    const reader = new FileReader()
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target!.result as ArrayBuffer), { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      if (rows.length < 2) { notify('الملف فارغ', 'error'); return }
+      const parsed: Record<string,string>[] = []
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] as string[]
+        if (!r[0] && !r[1]) continue
+        const obj: Record<string,string> = {}
+        GRADE_COLS.forEach((col, idx) => { obj[col] = String(r[idx] ?? '').trim() })
+        if (!obj.status) obj.status = Number(obj.totalScore) / Math.max(1, Number(obj.maxScore)) >= 0.5 ? 'pass' : 'fail'
+        if (obj.maxScore && obj.totalScore) obj.percentage = String(Math.round((Number(obj.totalScore) / Number(obj.maxScore)) * 100))
+        parsed.push(obj)
+      }
+      setPreview(parsed); setFileName(file.name)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function doImport() {
+    if (!preview.length) return
+    if (!semesterId) { notify('اختر الفصل الدراسي أولاً', 'error'); return }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/results-control/results/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ semesterId, results: preview }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم: ${d.created} جديد، ${d.updated} محدَّث`)
+      else notify(d.error || 'فشل الاستيراد', 'error')
+    } finally { setSaving(false) }
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([GRADE_COLS.map(c => GRADE_HEADERS[c]), ['1001','أحمد محمد','الصف الأول','85','100','B+','pass']])
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الدرجات')
+    XLSX.writeFile(wb, 'نموذج_استيراد_الدرجات.xlsx')
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <div style={{ fontWeight: 800, color: '#0f172a' }}>📥 استيراد درجات من Excel</div>
+            <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '3px' }}>حدد الفصل الدراسي ثم ارفع الملف</div>
+          </div>
+          <button onClick={downloadTemplate} className="btn-outline btn-sm">⬇️ تحميل النموذج</button>
+        </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label className="form-label">الفصل الدراسي *</label>
+          <select className="form-input" value={semesterId} onChange={e => setSemesterId(e.target.value ? Number(e.target.value) : '')}>
+            <option value="">اختر الفصل...</option>
+            {semesters.map(s => <option key={s.id} value={s.id}>{s.nameAr} · {s.academicYear}</option>)}
+          </select>
+        </div>
+        <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
+          onClick={() => fileRef.current?.click()}
+          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
+          <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
+          <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
+          <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '4px' }}>.xlsx · .xls · .csv</div>
+        </div>
+      </div>
+
+      {preview.length > 0 && (
+        <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ fontWeight: 700 }}>معاينة — {preview.length} طالب</div>
+            <button onClick={doImport} disabled={saving || !semesterId} className="btn-primary">
+              {saving ? <><span className="spinner" /> جارٍ الاستيراد...</> : `✅ استيراد ${preview.length} طالب`}
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+              <thead><tr style={{ background: '#f1f5f9' }}>
+                {['رقم الجلوس','اسم الطالب','الصف','المجموع','النسبة','الحالة'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'start', fontWeight: 700, color: '#475569', whiteSpace: 'nowrap' }}>{h}</th>)}
+              </tr></thead>
+              <tbody>{preview.slice(0, 10).map((r, i) => (
+                <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.seatNumber}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.nameAr}</td>
+                  <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 700 }}>{r.totalScore}/{r.maxScore}</td>
+                  <td style={{ padding: '7px 12px', color: '#0a5c36' }}>{r.percentage ?? '—'}%</td>
+                  <td style={{ padding: '7px 12px', color: r.status === 'pass' ? '#15803d' : '#dc2626' }}>{r.status === 'pass' ? 'ناجح' : 'راسب'}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+            {preview.length > 10 && <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.78rem' }}>+{preview.length - 10} صفوف أخرى</div>}
+          </div>
+        </div>
+      )}
+
+      {result && (
+        <div className="card" style={{ padding: '18px 20px', borderColor: result.errors.length ? '#fca5a5' : '#86efac' }}>
+          <div style={{ fontWeight: 800, marginBottom: '8px' }}>نتيجة الاستيراد</div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <span style={{ color: '#15803d' }}>✅ جديد: <strong>{result.created}</strong></span>
+            <span style={{ color: '#2563eb' }}>🔄 محدَّث: <strong>{result.updated}</strong></span>
+            {result.errors.length > 0 && <span style={{ color: '#dc2626' }}>❌ أخطاء: <strong>{result.errors.length}</strong></span>}
+          </div>
+          {result.errors.slice(0, 5).map((e, i) => <div key={i} style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '6px' }}>• {e}</div>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Page shell
 // ============================================================
 export default function ResultsControlPage() {
@@ -434,6 +657,8 @@ export default function ResultsControlPage() {
         />
       )}
       {tab === 'results' && <ResultsTab presetSemesterId={resultsSemesterId} onConsumePreset={() => setResultsSemesterId(null)} />}
+      {tab === 'rankings' && <RankingsTab />}
+      {tab === 'import' && <GradeImportTab notify={notify} />}
     </StaffShell>
   )
 }

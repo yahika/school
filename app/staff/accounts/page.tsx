@@ -1,8 +1,9 @@
 'use client'
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
+import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
 
-type TabKey = 'overview' | 'fees' | 'payments' | 'expenses'
+type TabKey = 'overview' | 'fees' | 'payments' | 'expenses' | 'import' | 'overdue'
 type Notify = (msg: string, type?: 'success' | 'error') => void
 
 const TABS: { key: TabKey; label: string }[] = [
@@ -10,6 +11,8 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: 'fees', label: 'الرسوم الدراسية' },
   { key: 'payments', label: 'المدفوعات الإلكترونية' },
   { key: 'expenses', label: 'المصروفات' },
+  { key: 'import', label: '📥 استيراد / تعيين' },
+  { key: 'overdue', label: '⚠️ المتأخرون' },
 ]
 
 const EXPENSE_CATEGORIES = ['رواتب', 'مرافق', 'صيانة', 'مستلزمات', 'مواصلات', 'أخرى']
@@ -495,6 +498,238 @@ function ExpensesTab({ notify }: { notify: Notify }) {
 }
 
 // ============================================================
+// Excel Import / Bulk Fee Assign
+// ============================================================
+const FEE_COLS = ['studentName','seatNumber','gradeAr','amount','academicYear','notes']
+const FEE_HEADERS: Record<string,string> = { studentName:'اسم الطالب*', seatNumber:'رقم الجلوس', gradeAr:'الصف*', amount:'المبلغ*', academicYear:'العام الدراسي*', notes:'ملاحظات' }
+
+function AccountsImportTab({ notify }: { notify: Notify }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [mode, setMode] = useState<'import' | 'assign'>('assign')
+  const [dragOver, setDragOver] = useState(false)
+  const [preview, setPreview] = useState<Record<string,string>[]>([])
+  const [fileName, setFileName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState<{ created?: number; updated?: number; skipped?: number; errors?: string[] } | null>(null)
+  // bulk assign form
+  const [assignAmount, setAssignAmount] = useState('')
+  const [assignYear, setAssignYear] = useState('')
+  const [assignNotes, setAssignNotes] = useState('')
+
+  function parseFile(file: File) {
+    setResult(null)
+    const reader = new FileReader()
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target!.result as ArrayBuffer), { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      if (rows.length < 2) { notify('الملف فارغ', 'error'); return }
+      const parsed: Record<string,string>[] = []
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] as string[]
+        if (!r[0] && !r[2]) continue
+        const obj: Record<string,string> = {}
+        FEE_COLS.forEach((col, idx) => { obj[col] = String(r[idx] ?? '').trim() })
+        parsed.push(obj)
+      }
+      setPreview(parsed); setFileName(file.name); setMode('import')
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function doImport() {
+    if (!preview.length) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/accounts/fees/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'import', fees: preview }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم: ${d.created ?? 0} جديد`)
+      else notify(d.error || 'فشل الاستيراد', 'error')
+    } finally { setSaving(false) }
+  }
+
+  async function doAssign() {
+    if (!assignAmount || !assignYear) { notify('المبلغ والعام الدراسي مطلوبان', 'error'); return }
+    if (!confirm(`هل تريد تعيين رسوم ${Number(assignAmount).toLocaleString()} ج.م للعام ${assignYear} لجميع الطلاب النشطين؟`)) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/accounts/fees/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'assign', amount: Number(assignAmount), academicYear: assignYear, notes: assignNotes || undefined }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم تعيين الرسوم لـ ${d.created} طالب (تخطي ${d.skipped ?? 0} مكرر)`)
+      else notify(d.error || 'فشل التعيين', 'error')
+    } finally { setSaving(false) }
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([FEE_COLS.map(c => FEE_HEADERS[c]), ['أحمد محمد','1001','الصف الأول','5000','2025-2026','']])
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الرسوم')
+    XLSX.writeFile(wb, 'نموذج_استيراد_الرسوم.xlsx')
+  }
+
+  return (
+    <div>
+      {/* Mode selector */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '18px' }}>
+        {([['assign','⚡ تعيين للكل'],['import','📥 استيراد Excel']] as [typeof mode, string][]).map(([k, label]) => (
+          <button key={k} onClick={() => setMode(k)} style={{ padding: '9px 22px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', fontFamily: 'inherit', cursor: 'pointer', background: mode === k ? '#0a5c36' : 'white', color: mode === k ? 'white' : '#374151', border: mode === k ? 'none' : '1px solid #e2e8f0' }}>{label}</button>
+        ))}
+      </div>
+
+      {mode === 'assign' && (
+        <div className="card" style={{ padding: '22px', maxWidth: '540px' }}>
+          <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>⚡ تعيين رسوم لجميع الطلاب النشطين</div>
+          <div style={{ color: '#64748b', fontSize: '0.8rem', marginBottom: '18px' }}>يُنشئ سجل رسوم واحد لكل طالب نشط — يتخطى الطلاب الذين لديهم سجل للعام نفسه</div>
+          <Field label="المبلغ (ج.م) *"><input className="form-input" type="number" min="1" value={assignAmount} onChange={e => setAssignAmount(e.target.value)} placeholder="مثال: 5000" /></Field>
+          <Field label="العام الدراسي *"><input className="form-input" value={assignYear} onChange={e => setAssignYear(e.target.value)} placeholder="مثال: 2025-2026" /></Field>
+          <Field label="ملاحظات"><input className="form-input" value={assignNotes} onChange={e => setAssignNotes(e.target.value)} placeholder="اختياري" /></Field>
+          <button onClick={doAssign} disabled={saving} className="btn-primary">
+            {saving ? <><span className="spinner" /> جارٍ التعيين...</> : '✅ تعيين الرسوم الآن'}
+          </button>
+        </div>
+      )}
+
+      {mode === 'import' && (
+        <>
+          <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+              <div>
+                <div style={{ fontWeight: 800, color: '#0f172a' }}>📥 استيراد رسوم من Excel</div>
+                <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '3px' }}>كل صف = سجل رسوم جديد</div>
+              </div>
+              <button onClick={downloadTemplate} className="btn-outline btn-sm">⬇️ تحميل النموذج</button>
+            </div>
+            <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+              onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
+              onClick={() => fileRef.current?.click()}
+              style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+              <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
+              <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
+              <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
+              <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '4px' }}>.xlsx · .xls · .csv</div>
+            </div>
+          </div>
+
+          {preview.length > 0 && (
+            <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ fontWeight: 700 }}>معاينة — {preview.length} سجل</div>
+                <button onClick={doImport} disabled={saving} className="btn-primary">
+                  {saving ? <><span className="spinner" /> جارٍ الاستيراد...</> : `✅ استيراد ${preview.length} سجل`}
+                </button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+                  <thead><tr style={{ background: '#f1f5f9' }}>
+                    {['اسم الطالب','الصف','المبلغ','العام الدراسي'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'start', fontWeight: 700, color: '#475569', whiteSpace: 'nowrap' }}>{h}</th>)}
+                  </tr></thead>
+                  <tbody>{preview.slice(0, 10).map((r, i) => (
+                    <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.studentName}</td>
+                      <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>
+                      <td style={{ padding: '7px 12px', color: '#15803d', fontWeight: 700 }}>{r.amount}</td>
+                      <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.academicYear}</td>
+                    </tr>
+                  ))}</tbody>
+                </table>
+                {preview.length > 10 && <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.78rem' }}>+{preview.length - 10} صفوف أخرى</div>}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {result && (
+        <div className="card" style={{ padding: '18px 20px', borderColor: (result.errors?.length ?? 0) > 0 ? '#fca5a5' : '#86efac', marginTop: '14px' }}>
+          <div style={{ fontWeight: 800, marginBottom: '8px' }}>النتيجة</div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            {result.created !== undefined && <span style={{ color: '#15803d' }}>✅ أُنشئ: <strong>{result.created}</strong></span>}
+            {result.skipped !== undefined && <span style={{ color: '#2563eb' }}>⏭️ تخطّى: <strong>{result.skipped}</strong></span>}
+            {(result.errors?.length ?? 0) > 0 && <span style={{ color: '#dc2626' }}>❌ أخطاء: <strong>{result.errors!.length}</strong></span>}
+          </div>
+          {result.errors?.slice(0, 5).map((e, i) => <div key={i} style={{ fontSize: '0.78rem', color: '#dc2626', marginTop: '6px' }}>• {e}</div>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// Overdue Fees with WhatsApp Reminder
+// ============================================================
+interface OverdueRow {
+  id: number; studentName: string; seatNumber: string | null; gradeAr: string; amount: number; academicYear: string; phone: string | null
+}
+
+function OverdueTab({ notify }: { notify: Notify }) {
+  const [overdue, setOverdue] = useState<OverdueRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [sending, setSending] = useState<number | null>(null)
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    setLoading(true)
+    fetch('/api/staff/accounts/fees/overdue').then(r => r.json()).then(d => { setOverdue(d.overdue ?? []); setLoading(false) }).catch(() => setLoading(false))
+  }, [])
+
+  async function sendReminder(row: OverdueRow) {
+    if (!row.phone) { notify('لا يوجد رقم هاتف لهذا الطالب', 'error'); return }
+    setSending(row.id)
+    try {
+      const res = await fetch('/api/staff/accounts/fees/remind', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: row.phone, studentName: row.studentName, amount: row.amount, academicYear: row.academicYear }) })
+      const d = await res.json()
+      if (res.ok && d.sent) notify(`تم إرسال تذكير WhatsApp إلى ولي أمر ${row.studentName}`)
+      else notify('فشل إرسال الرسالة — تأكد من إعداد UltraMsg', 'error')
+    } finally { setSending(null) }
+  }
+
+  async function sendAll() {
+    const withPhone = filtered.filter(r => r.phone)
+    if (!withPhone.length) { notify('لا يوجد طلاب متأخرون لديهم أرقام هاتف', 'error'); return }
+    if (!confirm(`إرسال تذكير WhatsApp لـ ${withPhone.length} ولي أمر؟`)) return
+    let sent = 0
+    for (const r of withPhone) {
+      await fetch('/api/staff/accounts/fees/remind', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: r.phone, studentName: r.studentName, amount: r.amount, academicYear: r.academicYear }) })
+      sent++
+    }
+    notify(`تم إرسال ${sent} تذكير`)
+  }
+
+  const filtered = overdue.filter(r => !search || r.studentName.includes(search) || (r.seatNumber ?? '').includes(search) || r.gradeAr.includes(search))
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 بحث بالاسم أو الصف أو رقم الجلوس"
+          style={{ flex: 1, minWidth: '220px', padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.88rem' }} />
+        <div style={{ color: '#64748b', fontSize: '0.82rem' }}>⚠️ {filtered.length} طالب متأخر</div>
+        {filtered.some(r => r.phone) && (
+          <button onClick={sendAll} className="btn-primary" style={{ whiteSpace: 'nowrap' }}>📲 إرسال الكل</button>
+        )}
+      </div>
+
+      {loading ? <Loading /> : filtered.length === 0 ? <Empty icon="✅" text="لا يوجد طلاب متأخرون — ممتاز!" /> : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {filtered.map(r => (
+            <div key={r.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: '1px solid #fca5a5', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>{r.studentName} {r.seatNumber ? <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.78rem' }}>#{r.seatNumber}</span> : null}</div>
+                <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>{r.gradeAr} · {r.academicYear} · {r.phone ? `📞 ${r.phone}` : <span style={{ color: '#f59e0b' }}>⚠️ بلا رقم هاتف</span>}</div>
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#dc2626' }}>{r.amount.toLocaleString()} ج.م</div>
+              <button onClick={() => sendReminder(r)} disabled={!r.phone || sending === r.id} className="btn-outline btn-sm" style={{ whiteSpace: 'nowrap', color: r.phone ? '#0a5c36' : '#94a3b8' }}>
+                {sending === r.id ? '...' : '📲 تذكير'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Page shell
 // ============================================================
 export default function AccountsPage() {
@@ -509,6 +744,8 @@ export default function AccountsPage() {
       {tab === 'fees' && <FeesTab notify={notify} />}
       {tab === 'payments' && <PaymentsTab />}
       {tab === 'expenses' && <ExpensesTab notify={notify} />}
+      {tab === 'import' && <AccountsImportTab notify={notify} />}
+      {tab === 'overdue' && <OverdueTab notify={notify} />}
     </StaffShell>
   )
 }

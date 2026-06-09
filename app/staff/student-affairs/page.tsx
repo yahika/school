@@ -1,15 +1,18 @@
 'use client'
-import { useState, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import StaffShell from '../_components/StaffShell'
+import * as XLSX from 'xlsx'
 
-type TabKey = 'overview' | 'files' | 'attendance' | 'conduct'
+type TabKey = 'overview' | 'files' | 'attendance' | 'conduct' | 'import' | 'certificates'
 type Notify = (msg: string, type?: 'success' | 'error') => void
 
 const TABS: { key: TabKey; label: string }[] = [
-  { key: 'overview', label: 'نظرة عامة' },
-  { key: 'files', label: 'ملفات الطلاب' },
-  { key: 'attendance', label: 'الحضور والغياب' },
-  { key: 'conduct', label: 'السلوك' },
+  { key: 'overview',      label: 'نظرة عامة' },
+  { key: 'files',         label: 'ملفات الطلاب' },
+  { key: 'attendance',    label: 'الحضور والغياب' },
+  { key: 'conduct',       label: 'السلوك' },
+  { key: 'import',        label: '📥 استيراد Excel' },
+  { key: 'certificates',  label: '📄 الشهادات' },
 ]
 
 function todayStr() { return new Date().toISOString().slice(0, 10) }
@@ -603,6 +606,172 @@ function ConductTab({ notify }: { notify: Notify }) {
 }
 
 // ============================================================
+// Excel Import
+// ============================================================
+const STUDENT_COLS = ['seatNumber','nameAr','nameEn','gradeAr','guardianName','guardianPhone','address','enrollDate']
+const STUDENT_HEADERS: Record<string,string> = { seatNumber:'رقم الجلوس*', nameAr:'الاسم عربي*', nameEn:'الاسم إنجليزي', gradeAr:'الصف*', guardianName:'ولي الأمر', guardianPhone:'هاتف ولي الأمر', address:'العنوان', enrollDate:'تاريخ الالتحاق' }
+
+function ImportTab({ notify }: { notify: Notify }) {
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
+  const [preview, setPreview] = useState<Record<string,string>[]>([])
+  const [fileName, setFileName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [result, setResult] = useState<{ created: number; updated: number; errors: string[] } | null>(null)
+
+  function parseFile(file: File) {
+    setResult(null)
+    const reader = new FileReader()
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target!.result as ArrayBuffer), { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+      if (rows.length < 2) { notify('الملف فارغ أو لا يحتوي على بيانات', 'error'); return }
+      const parsed: Record<string,string>[] = []
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i] as string[]
+        if (!r[0] && !r[1]) continue
+        const obj: Record<string,string> = {}
+        STUDENT_COLS.forEach((col, idx) => { obj[col] = String(r[idx] ?? '').trim() })
+        parsed.push(obj)
+      }
+      setPreview(parsed)
+      setFileName(file.name)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function doImport() {
+    if (!preview.length) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/student-affairs/students/bulk', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ students: preview }) })
+      const d = await res.json()
+      setResult(d)
+      if (res.ok) notify(`تم: ${d.created} جديد، ${d.updated} محدَّث`)
+      else notify(d.error || 'فشل الاستيراد', 'error')
+    } finally { setSaving(false) }
+  }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([STUDENT_COLS.map(c => STUDENT_HEADERS[c]), ['1001','أحمد محمد','Ahmed Mohamed','الصف الأول','محمد علي','01012345678','الإسكندرية','']])
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الطلاب')
+    XLSX.writeFile(wb, 'نموذج_استيراد_الطلاب.xlsx')
+  }
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1rem' }}>📥 استيراد طلاب من Excel</div>
+            <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '3px' }}>ارفع ملف Excel لإضافة أو تحديث ملفات الطلاب دفعةً واحدة</div>
+          </div>
+          <button onClick={downloadTemplate} className="btn-outline btn-sm">⬇️ تحميل النموذج</button>
+        </div>
+        <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
+          onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
+          onClick={() => fileRef.current?.click()}
+          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
+          <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
+          <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
+          <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '4px' }}>.xlsx · .xls · .csv</div>
+        </div>
+      </div>
+
+      {preview.length > 0 && (
+        <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ fontWeight: 700, color: '#0f172a' }}>معاينة — {preview.length} طالب</div>
+            <button onClick={doImport} disabled={saving} className="btn-primary">
+              {saving ? <><span className="spinner" /> جارٍ الاستيراد...</> : `✅ استيراد ${preview.length} طالب`}
+            </button>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+              <thead><tr style={{ background: '#f1f5f9' }}>
+                {['رقم الجلوس','الاسم عربي','الصف','هاتف ولي الأمر'].map(h => <th key={h} style={{ padding: '8px 12px', textAlign: 'start', fontWeight: 700, color: '#475569', whiteSpace: 'nowrap' }}>{h}</th>)}
+              </tr></thead>
+              <tbody>{preview.slice(0,10).map((r,i) => (
+                <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.seatNumber}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.nameAr}</td>
+                  <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>
+                  <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.guardianPhone}</td>
+                </tr>
+              ))}</tbody>
+            </table>
+            {preview.length > 10 && <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.78rem' }}>+{preview.length - 10} صفوف أخرى</div>}
+          </div>
+        </div>
+      )}
+
+      {result && (
+        <div className="card" style={{ padding: '18px 20px', borderColor: result.errors.length ? '#fca5a5' : '#86efac' }}>
+          <div style={{ fontWeight: 800, marginBottom: '8px' }}>نتيجة الاستيراد</div>
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: result.errors.length ? '12px' : 0 }}>
+            <span style={{ color: '#15803d' }}>✅ جديد: <strong>{result.created}</strong></span>
+            <span style={{ color: '#2563eb' }}>🔄 محدَّث: <strong>{result.updated}</strong></span>
+            {result.errors.length > 0 && <span style={{ color: '#dc2626' }}>❌ أخطاء: <strong>{result.errors.length}</strong></span>}
+          </div>
+          {result.errors.slice(0, 5).map((e, i) => <div key={i} style={{ fontSize: '0.78rem', color: '#dc2626' }}>• {e}</div>)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// Certificates
+// ============================================================
+function CertificatesTab({ notify }: { notify: Notify }) {
+  const [search, setSearch] = useState('')
+  const [students, setStudents] = useState<{ seatNumber: string; nameAr: string; gradeAr: string; status: string }[]>([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!search.trim()) { setStudents([]); return }
+    const t = setTimeout(() => {
+      setLoading(true)
+      fetch(`/api/staff/student-affairs/students?search=${encodeURIComponent(search)}`)
+        .then(r => r.json()).then(d => setStudents(d.files ?? [])).finally(() => setLoading(false))
+    }, 350)
+    return () => clearTimeout(t)
+  }, [search])
+
+  return (
+    <div>
+      <div className="card" style={{ padding: '20px', marginBottom: '18px' }}>
+        <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '6px' }}>📄 شهادات القيد والقبول</div>
+        <div style={{ color: '#64748b', fontSize: '0.82rem', marginBottom: '16px' }}>ابحث عن طالب لطباعة شهادة قيده — ستُفتح في نافذة جديدة جاهزة للطباعة كـ PDF</div>
+        <input className="form-input" placeholder="🔍 ابحث باسم الطالب أو رقم الجلوس..." value={search} onChange={e => setSearch(e.target.value)} />
+      </div>
+
+      {loading && <Loading />}
+      {!loading && search && students.length === 0 && <Empty icon="🔍" text="لا توجد نتائج — جرب اسمًا مختلفًا" />}
+      {students.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {students.map(s => (
+            <div key={s.seatNumber} className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, color: '#0f172a' }}>{s.nameAr}</div>
+                <div style={{ fontSize: '0.78rem', color: '#64748b' }}>رقم الجلوس: {s.seatNumber} · {s.gradeAr}</div>
+              </div>
+              <button
+                onClick={() => window.open(`/staff/student-affairs/certificate/${s.seatNumber}`, '_blank')}
+                className="btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                🖨️ طباعة شهادة
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Page shell
 // ============================================================
 export default function StudentAffairsPage() {
@@ -617,6 +786,8 @@ export default function StudentAffairsPage() {
       {tab === 'files' && <FilesTab notify={notify} />}
       {tab === 'attendance' && <AttendanceTab notify={notify} />}
       {tab === 'conduct' && <ConductTab notify={notify} />}
+      {tab === 'import' && <ImportTab notify={notify} />}
+      {tab === 'certificates' && <CertificatesTab notify={notify} />}
     </StaffShell>
   )
 }
