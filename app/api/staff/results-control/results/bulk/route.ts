@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 // POST /api/staff/results-control/results/bulk
 // Body: { semesterId: number, results: Record<string, string>[] }
-// Upserts StudentResult records (no subjects — just top-level scores).
+// Upserts Result records (no subjects — just top-level scores).
 export async function POST(req: NextRequest) {
   try {
     const { semesterId, results } = await req.json() as {
@@ -47,17 +47,18 @@ export async function POST(req: NextRequest) {
       const letterGrade = row.letterGrade?.trim() || null
 
       try {
-        const existing = await prisma.studentResult.findFirst({
-          where: { semesterId, seatNumber },
+        const existing = await prisma.result.findUnique({
+          where: { semesterId_seatNumber: { semesterId, seatNumber } },
+          select: { id: true },
         })
         if (existing) {
-          await prisma.studentResult.update({
+          await prisma.result.update({
             where: { id: existing.id },
             data: { nameAr, gradeAr, totalScore, maxScore, percentage, status, letterGrade },
           })
           updated++
         } else {
-          await prisma.studentResult.create({
+          await prisma.result.create({
             data: { semesterId, seatNumber, nameAr, gradeAr, totalScore, maxScore, percentage, status, letterGrade },
           })
           created++
