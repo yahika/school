@@ -16,6 +16,7 @@ const DEPARTMENTS = [
   { value: 'accounts',         labelAr: 'حسابات الماليات',              icon: '💰' },
   { value: 'results_control',  labelAr: 'كونترول النتائج',              icon: '📋' },
   { value: 'inventory',        labelAr: 'المخازن والكتب واليونيفورم',   icon: '📦' },
+  { value: 'owner',            labelAr: 'صاحب المدرسة',                 icon: '👑' },
 ]
 const deptInfo = (v: string) => DEPARTMENTS.find(d => d.value === v) ?? { value: v, labelAr: v, icon: '🏷️' }
 

@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server'
 const COOKIE_NAME = 'as-staff-token'
 const EXPIRY = '8h'
 
-export type Department = 'student_affairs' | 'buses' | 'accounts' | 'results_control' | 'inventory'
+export type Department = 'student_affairs' | 'buses' | 'accounts' | 'results_control' | 'inventory' | 'owner'
 
 export interface DepartmentInfo {
   value: Department
@@ -23,6 +23,7 @@ export const DEPARTMENTS: DepartmentInfo[] = [
   { value: 'accounts', labelAr: 'حسابات الماليات', icon: '💰', href: '/staff/accounts', descAr: 'متابعة المصروفات والرسوم والمدفوعات' },
   { value: 'results_control', labelAr: 'كونترول النتائج', icon: '📋', href: '/staff/results-control', descAr: 'مراجعة واعتماد نتائج الفصول الدراسية' },
   { value: 'inventory', labelAr: 'المخازن والكتب واليونيفورم', icon: '📦', href: '/staff/inventory', descAr: 'مخزون الكتب والزي المدرسي والمستلزمات' },
+  { value: 'owner', labelAr: 'صاحب المدرسة', icon: '👑', href: '/staff/owner', descAr: 'نظرة شاملة ومباشرة على كل أقسام المدرسة وأرقامها' },
 ]
 
 export function departmentInfo(dep: string): DepartmentInfo | undefined {
