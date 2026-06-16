@@ -434,7 +434,7 @@ function RankingsTab() {
   }, [semesterId])
   useEffect(() => { load() }, [load])
 
-  const grades = [...new Set(results.map(r => r.gradeAr))].sort()
+  const grades = Array.from(new Set(results.map(r => r.gradeAr))).sort()
   const filtered = gradeFilter ? results.filter(r => r.gradeAr === gradeFilter) : results
 
   // Sort by percentage desc
