@@ -3,6 +3,72 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { Lang } from '@/lib/translations'
 
+// ── DEV NAVIGATION — flip to false before going live ──────────────────────────
+const DEV_MODE = true
+
+const DEV_GROUPS = [
+  {
+    label: 'Public Pages',
+    icon: '🌐',
+    color: '#22c55e',
+    links: [
+      { label: 'Home', href: '/', icon: '🏠' },
+      { label: 'Results', href: '/results', icon: '📊' },
+      { label: 'Apply', href: '/apply', icon: '📝' },
+      { label: 'Application Status', href: '/apply/status', icon: '🔍' },
+      { label: 'News', href: '/news', icon: '📰' },
+      { label: 'Exam Schedule', href: '/schedule', icon: '📅' },
+      { label: 'Calendar', href: '/calendar', icon: '🗓️' },
+    ],
+  },
+  {
+    label: 'Parent Portal',
+    icon: '👨‍👩‍👧',
+    color: '#38bdf8',
+    links: [
+      { label: 'Parent Login', href: '/parent/login', icon: '🔐' },
+      { label: 'Parent Dashboard', href: '/parent/dashboard', icon: '🏠' },
+      { label: 'Reset Password', href: '/parent/reset-password', icon: '🔑' },
+      { label: 'Payment Result', href: '/parent/payment/result', icon: '💳' },
+    ],
+  },
+  {
+    label: 'Admin Portal',
+    icon: '🛠️',
+    color: '#f59e0b',
+    links: [
+      { label: 'Admin Login', href: '/admin/login', icon: '🔐' },
+      { label: 'Dashboard', href: '/admin/dashboard', icon: '📊' },
+      { label: 'Students', href: '/admin/students', icon: '🎓' },
+      { label: 'Parents', href: '/admin/parents', icon: '👨‍👩‍👧' },
+      { label: 'Applications', href: '/admin/applications', icon: '📝' },
+      { label: 'Announcements', href: '/admin/announcements', icon: '📢' },
+      { label: 'Fees', href: '/admin/fees', icon: '💰' },
+      { label: 'Exam Schedule', href: '/admin/schedule', icon: '📅' },
+      { label: 'Calendar', href: '/admin/calendar', icon: '🗓️' },
+      { label: 'Messages', href: '/admin/messages', icon: '✉️' },
+      { label: 'WhatsApp', href: '/admin/whatsapp', icon: '💬' },
+      { label: 'Staff Accounts', href: '/admin/staff', icon: '👥' },
+    ],
+  },
+  {
+    label: 'Staff Portals',
+    icon: '👔',
+    color: '#a78bfa',
+    links: [
+      { label: 'Staff Login', href: '/staff/login', icon: '🔐' },
+      { label: 'شؤون الطلبة', href: '/staff/student-affairs', icon: '🎓' },
+      { label: 'الباصات', href: '/staff/buses', icon: '🚌' },
+      { label: 'الحسابات', href: '/staff/accounts', icon: '💰' },
+      { label: 'كونترول النتائج', href: '/staff/results-control', icon: '📋' },
+      { label: 'المخازن', href: '/staff/inventory', icon: '📦' },
+      { label: 'المدير', href: '/staff/principal', icon: '🏫' },
+      { label: 'صاحب المدرسة', href: '/staff/owner', icon: '👑' },
+    ],
+  },
+]
+// ──────────────────────────────────────────────────────────────────────────────
+
 const content = {
   ar: {
     nav: { home: 'الرئيسية', results: 'النتائج', apply: 'التسجيل', news: 'الإعلانات', schedule: 'جدول الامتحانات', contact: 'تواصل', admin: 'الإدارة', lang: 'English' },
@@ -707,6 +773,42 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── DEV NAV PANEL — set DEV_MODE=false to hide ── */}
+      {DEV_MODE && (
+        <section style={{ background: '#0f172a', padding: '48px 24px', borderTop: '2px solid #1e293b' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
+              <div style={{ background: '#f59e0b', borderRadius: '8px', padding: '4px 12px', fontSize: '0.72rem', fontWeight: 800, color: '#000', letterSpacing: '0.06em' }}>DEV</div>
+              <div style={{ color: '#94a3b8', fontWeight: 700, fontSize: '0.88rem' }}>All Pages — Quick Navigation</div>
+            </div>
+            {DEV_GROUPS.map(group => (
+              <div key={group.label} style={{ marginBottom: '24px' }}>
+                <div style={{ color: group.color, fontWeight: 800, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>{group.icon}</span> {group.label}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {group.links.map(link => (
+                    <a key={link.href} href={link.href} style={{
+                      background: group.color + '14', border: `1px solid ${group.color}30`,
+                      color: group.color, borderRadius: '8px', padding: '6px 14px',
+                      textDecoration: 'none', fontSize: '0.8rem', fontWeight: 600,
+                      display: 'flex', alignItems: 'center', gap: '5px',
+                      transition: 'background 0.15s',
+                    }}
+                      onMouseEnter={e => ((e.currentTarget as HTMLElement).style.background = group.color + '28')}
+                      onMouseLeave={e => ((e.currentTarget as HTMLElement).style.background = group.color + '14')}
+                    >
+                      {link.icon && <span style={{ fontSize: '0.85rem' }}>{link.icon}</span>}
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── FOOTER ── */}
       <footer style={{ background: '#041f12', padding: '48px 24px 24px' }}>
