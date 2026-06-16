@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import DevBar from './_components/DevBar'
 
 export const metadata: Metadata = {
   title: {
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="theme-color" content="#0a5c36" />
       </head>
-      <body>{children}</body>
+      <body>{children}<DevBar /></body>
     </html>
   )
 }
