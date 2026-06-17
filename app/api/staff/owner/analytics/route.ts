@@ -26,7 +26,7 @@ export async function GET() {
       prisma.feeRecord.findMany({ where: { isPaid: true, paidAt: { not: null } }, select: { amount: true, paidAt: true } }),
       prisma.expense.findMany({ select: { amount: true, category: true, date: true } }),
       prisma.studentFile.count({ where: { status: 'active' } }),
-      prisma.inventoryItem.findMany({ select: { quantity: true, unitPrice: true } }),
+      prisma.inventoryItem.findMany({ select: { quantity: true, unitPrice: true, minThreshold: true } }),
       prisma.bus.findMany({ select: { status: true } }),
     ])
 
