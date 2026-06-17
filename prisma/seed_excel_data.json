@@ -12335,6 +12335,7 @@
       "studentNameEn": "Tarek Mansour",
       "dateOfBirth": "2010-01-01",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Tarek Mansour",
       "parentPhone": "0100899522",
       "status": "pending"
     },
@@ -12343,6 +12344,7 @@
       "studentNameEn": "Habiba Eissa",
       "dateOfBirth": "2018-02-02",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Habiba Eissa",
       "parentPhone": "0100392005",
       "status": "pending"
     },
@@ -12351,6 +12353,7 @@
       "studentNameEn": "Nada Aly",
       "dateOfBirth": "2013-03-03",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Nada Aly",
       "parentPhone": "0100940338",
       "status": "pending"
     },
@@ -12359,6 +12362,7 @@
       "studentNameEn": "Laila Salem",
       "dateOfBirth": "2013-04-04",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Laila Salem",
       "parentPhone": "0100289090",
       "status": "pending"
     },
@@ -12367,6 +12371,7 @@
       "studentNameEn": "Nada Hassan",
       "dateOfBirth": "2013-05-05",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Nada Hassan",
       "parentPhone": "0100714060",
       "status": "pending"
     },
@@ -12375,6 +12380,7 @@
       "studentNameEn": "Ali Moussa",
       "dateOfBirth": "2013-06-06",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Ali Moussa",
       "parentPhone": "0100787177",
       "status": "pending"
     },
@@ -12383,6 +12389,7 @@
       "studentNameEn": "Fatma Ged",
       "dateOfBirth": "2018-07-07",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Fatma Ged",
       "parentPhone": "0100600726",
       "status": "pending"
     },
@@ -12391,6 +12398,7 @@
       "studentNameEn": "Sara Eissa",
       "dateOfBirth": "2018-08-08",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Sara Eissa",
       "parentPhone": "0100694317",
       "status": "pending"
     },
@@ -12399,6 +12407,7 @@
       "studentNameEn": "Fatma Badawy",
       "dateOfBirth": "2013-09-09",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Fatma Badawy",
       "parentPhone": "0100142627",
       "status": "pending"
     },
@@ -12407,6 +12416,7 @@
       "studentNameEn": "Tarek Radwan",
       "dateOfBirth": "2013-10-10",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Tarek Radwan",
       "parentPhone": "0100307870",
       "status": "pending"
     },
@@ -12415,6 +12425,7 @@
       "studentNameEn": "Fatma Abdel-Rahman",
       "dateOfBirth": "2018-11-11",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Fatma Abdel-Rahman",
       "parentPhone": "0100324653",
       "status": "pending"
     },
@@ -12423,6 +12434,7 @@
       "studentNameEn": "Nada Moussa",
       "dateOfBirth": "2010-12-12",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Nada Moussa",
       "parentPhone": "0100951542",
       "status": "pending"
     },
@@ -12431,6 +12443,7 @@
       "studentNameEn": "Laila Mansour",
       "dateOfBirth": "2010-01-13",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Laila Mansour",
       "parentPhone": "0100663309",
       "status": "pending"
     },
@@ -12439,6 +12452,7 @@
       "studentNameEn": "Youssef Radwan",
       "dateOfBirth": "2018-02-14",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Youssef Radwan",
       "parentPhone": "0100427661",
       "status": "pending"
     },
@@ -12447,6 +12461,7 @@
       "studentNameEn": "Farida Abdel-Rahman",
       "dateOfBirth": "2018-03-15",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Farida Abdel-Rahman",
       "parentPhone": "0100222296",
       "status": "pending"
     },
@@ -12455,6 +12470,7 @@
       "studentNameEn": "Laila Mansour",
       "dateOfBirth": "2010-04-16",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Laila Mansour",
       "parentPhone": "0100795590",
       "status": "pending"
     },
@@ -12463,6 +12479,7 @@
       "studentNameEn": "Mustafa Sawy",
       "dateOfBirth": "2010-05-17",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Mustafa Sawy",
       "parentPhone": "0100566188",
       "status": "pending"
     },
@@ -12471,6 +12488,7 @@
       "studentNameEn": "Hana Tawfik",
       "dateOfBirth": "2010-06-18",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Hana Tawfik",
       "parentPhone": "0100707762",
       "status": "pending"
     },
@@ -12479,6 +12497,7 @@
       "studentNameEn": "Kareem Hassan",
       "dateOfBirth": "2010-07-19",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Kareem Hassan",
       "parentPhone": "0100565382",
       "status": "pending"
     },
@@ -12487,6 +12506,7 @@
       "studentNameEn": "Kareem Tawfik",
       "dateOfBirth": "2010-08-20",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Kareem Tawfik",
       "parentPhone": "0100260783",
       "status": "pending"
     },
@@ -12495,6 +12515,7 @@
       "studentNameEn": "Nada El-Din",
       "dateOfBirth": "2013-09-21",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Nada El-Din",
       "parentPhone": "0100650929",
       "status": "pending"
     },
@@ -12503,6 +12524,7 @@
       "studentNameEn": "Mohamed Sharaf",
       "dateOfBirth": "2010-10-22",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Mohamed Sharaf",
       "parentPhone": "0100154481",
       "status": "pending"
     },
@@ -12511,6 +12533,7 @@
       "studentNameEn": "Hassan Sawy",
       "dateOfBirth": "2013-11-23",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Hassan Sawy",
       "parentPhone": "0100381256",
       "status": "pending"
     },
@@ -12519,6 +12542,7 @@
       "studentNameEn": "Khaled Ibrahim",
       "dateOfBirth": "2010-12-24",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Khaled Ibrahim",
       "parentPhone": "0100486580",
       "status": "pending"
     },
@@ -12527,6 +12551,7 @@
       "studentNameEn": "Nada Walid",
       "dateOfBirth": "2018-01-25",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Nada Walid",
       "parentPhone": "0100553597",
       "status": "pending"
     },
@@ -12535,6 +12560,7 @@
       "studentNameEn": "Fatma Tawfik",
       "dateOfBirth": "2010-02-26",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Fatma Tawfik",
       "parentPhone": "0100412921",
       "status": "pending"
     },
@@ -12543,6 +12569,7 @@
       "studentNameEn": "Fatma Hassan",
       "dateOfBirth": "2010-03-27",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Fatma Hassan",
       "parentPhone": "0100306255",
       "status": "pending"
     },
@@ -12551,6 +12578,7 @@
       "studentNameEn": "Sara Radwan",
       "dateOfBirth": "2018-04-28",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Sara Radwan",
       "parentPhone": "0100127442",
       "status": "pending"
     },
@@ -12559,6 +12587,7 @@
       "studentNameEn": "Mohamed Hassan",
       "dateOfBirth": "2010-05-01",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Mohamed Hassan",
       "parentPhone": "0100132987",
       "status": "pending"
     },
@@ -12567,6 +12596,7 @@
       "studentNameEn": "Hana Sawy",
       "dateOfBirth": "2013-06-02",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Hana Sawy",
       "parentPhone": "0100461602",
       "status": "pending"
     },
@@ -12575,6 +12605,7 @@
       "studentNameEn": "Laila Ghanem",
       "dateOfBirth": "2010-07-03",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Laila Ghanem",
       "parentPhone": "0100850699",
       "status": "pending"
     },
@@ -12583,6 +12614,7 @@
       "studentNameEn": "Nada Badawy",
       "dateOfBirth": "2013-08-04",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Nada Badawy",
       "parentPhone": "0100619821",
       "status": "pending"
     },
@@ -12591,6 +12623,7 @@
       "studentNameEn": "Aya Ged",
       "dateOfBirth": "2010-09-05",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Aya Ged",
       "parentPhone": "0100557297",
       "status": "pending"
     },
@@ -12599,6 +12632,7 @@
       "studentNameEn": "Habiba Mansour",
       "dateOfBirth": "2018-10-06",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Habiba Mansour",
       "parentPhone": "0100124851",
       "status": "pending"
     },
@@ -12607,6 +12641,7 @@
       "studentNameEn": "Tarek Abdel-Rahman",
       "dateOfBirth": "2010-11-07",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Tarek Abdel-Rahman",
       "parentPhone": "0100438338",
       "status": "pending"
     },
@@ -12615,6 +12650,7 @@
       "studentNameEn": "Sara Ghanem",
       "dateOfBirth": "2013-12-08",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Sara Ghanem",
       "parentPhone": "0100848412",
       "status": "pending"
     },
@@ -12623,6 +12659,7 @@
       "studentNameEn": "Tarek Badawy",
       "dateOfBirth": "2010-01-09",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Tarek Badawy",
       "parentPhone": "0100222479",
       "status": "pending"
     },
@@ -12631,6 +12668,7 @@
       "studentNameEn": "Ahmed Mansour",
       "dateOfBirth": "2013-02-10",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Ahmed Mansour",
       "parentPhone": "0100730227",
       "status": "pending"
     },
@@ -12639,6 +12677,7 @@
       "studentNameEn": "Khaled Ibrahim",
       "dateOfBirth": "2010-03-11",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Khaled Ibrahim",
       "parentPhone": "0100174399",
       "status": "pending"
     },
@@ -12647,6 +12686,7 @@
       "studentNameEn": "Omar Radwan",
       "dateOfBirth": "2018-04-12",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Omar Radwan",
       "parentPhone": "0100599514",
       "status": "pending"
     },
@@ -12655,6 +12695,7 @@
       "studentNameEn": "Jana Ged",
       "dateOfBirth": "2013-05-13",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Jana Ged",
       "parentPhone": "0100341289",
       "status": "pending"
     },
@@ -12663,6 +12704,7 @@
       "studentNameEn": "Youssef Hassan",
       "dateOfBirth": "2018-06-14",
       "gradeApplying": "الصف الأول الابتدائي",
+      "parentName": "ولي أمر Youssef Hassan",
       "parentPhone": "0100740809",
       "status": "pending"
     },
@@ -12671,6 +12713,7 @@
       "studentNameEn": "Ahmed Radwan",
       "dateOfBirth": "2013-07-15",
       "gradeApplying": "الصف السادس الابتدائي",
+      "parentName": "ولي أمر Ahmed Radwan",
       "parentPhone": "0100394773",
       "status": "pending"
     },
@@ -12679,6 +12722,7 @@
       "studentNameEn": "Mohamed Zaki",
       "dateOfBirth": "2010-08-16",
       "gradeApplying": "الصف الثالث الإعدادي",
+      "parentName": "ولي أمر Mohamed Zaki",
       "parentPhone": "0100654880",
       "status": "pending"
     }
