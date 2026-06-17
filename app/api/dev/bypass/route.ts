@@ -16,10 +16,6 @@ export const dynamic = 'force-dynamic'
 //   /api/dev/bypass?as=clear            → wipe all cookies → home
 
 export async function GET(req: NextRequest) {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
-  }
-
   const { searchParams } = new URL(req.url)
   const as = searchParams.get('as') ?? ''
   const dept = searchParams.get('dept') ?? 'student_affairs'
