@@ -104,7 +104,7 @@ function IntroOverlay({ name, onDone }: { name: string; onDone: () => void }) {
       </div>
       {/* sub */}
       <div style={{fontSize:'0.95rem',color:'rgba(255,255,255,0.5)',maxWidth:'460px',lineHeight:1.9,opacity:s>=4?1:0,transform:s>=4?'translateY(0)':'translateY(10px)',transition:'opacity 0.7s ease 0.1s,transform 0.7s ease 0.1s'}}>
-        إمبراطوريتك التعليمية — أرباح، إيرادات، أصول، وكل ما يجري في مدرستك في لحظة واحدة.
+        نظرة شاملة على كل أرقام مدرستك — الإيرادات، المصروفات، الأصول، والفريق — في مكان واحد، محدثة لحظة بلحظة.
       </div>
       {/* cta */}
       <button onClick={e=>{e.stopPropagation();finish()}} style={{
@@ -115,7 +115,7 @@ function IntroOverlay({ name, onDone }: { name: string; onDone: () => void }) {
         opacity:s>=5?1:0,transform:s>=5?'translateY(0) scale(1)':'translateY(12px) scale(0.96)',
         transition:'opacity 0.5s ease,transform 0.5s ease',pointerEvents:s>=5?'auto':'none',
       }}>
-        عرض الإمبراطورية ←
+        دخول اللوحة ←
       </button>
       <div style={{position:'absolute',bottom:'24px',fontSize:'0.73rem',color:'rgba(255,255,255,0.25)',opacity:s>=5?1:0,transition:'opacity 0.6s ease'}}>
         اضغط في أي مكان للمتابعة
@@ -454,7 +454,7 @@ export default function OwnerPortalPage() {
         {(!ov || !an) && (
           <div style={{textAlign:'center',padding:'100px 20px',color:'var(--ow-muted)'}}>
             <div style={{fontSize:'2rem',marginBottom:'12px'}}>⌛</div>
-            جارٍ تحميل بيانات الإمبراطورية...
+            جارٍ تحميل بيانات المدرسة...
           </div>
         )}
 
