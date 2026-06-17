@@ -24,15 +24,15 @@ export default async function CertificatePage({ params }: { params: { seat: stri
             background: white; padding: 20mm 18mm;
             display: flex; flex-direction: column;
           }
-          .school-header { text-align: center; border-bottom: 3px solid #0a5c36; padding-bottom: 14px; margin-bottom: 22px; }
-          .school-logo { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg,#0a5c36,#0d7a45); display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
-          .school-name { font-size: 1.6rem; font-weight: 900; color: #063d22; }
+          .school-header { text-align: center; border-bottom: 3px solid #5b21b6; padding-bottom: 14px; margin-bottom: 22px; }
+          .school-logo { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg,#5b21b6,#6d28d9); display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+          .school-name { font-size: 1.6rem; font-weight: 900; color: #3b0764; }
           .school-sub  { font-size: 0.85rem; color: #64748b; margin-top: 3px; }
           .cert-title  { text-align: center; margin: 24px 0; }
           .cert-title h1 { font-size: 1.9rem; font-weight: 900; color: #0f172a; letter-spacing: 0.04em; }
           .cert-title .underline { width: 120px; height: 4px; background: linear-gradient(90deg,#c8972b,#e5b850); border-radius: 2px; margin: 8px auto 0; }
           .cert-body  { font-size: 1.05rem; line-height: 2.1; color: #1e293b; flex: 1; }
-          .cert-body .highlight { font-weight: 900; color: #0a5c36; border-bottom: 1.5px dashed #0a5c3655; padding-bottom: 1px; }
+          .cert-body .highlight { font-weight: 900; color: #5b21b6; border-bottom: 1.5px dashed #5b21b655; padding-bottom: 1px; }
           .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 18px; background: #f8fafc; }
           .field-item  { display: flex; flex-direction: column; gap: 3px; }
           .field-label { font-size: 0.78rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -53,7 +53,7 @@ export default async function CertificatePage({ params }: { params: { seat: stri
       <body>
         {/* Print / Close buttons */}
         <div className="no-print" style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={() => window.print()} style={{ padding: '10px 22px', borderRadius: '8px', background: '#0a5c36', color: 'white', border: 'none', cursor: 'pointer', fontFamily: 'Tajawal,sans-serif', fontWeight: 700, fontSize: '0.9rem' }}>
+          <button onClick={() => window.print()} style={{ padding: '10px 22px', borderRadius: '8px', background: '#5b21b6', color: 'white', border: 'none', cursor: 'pointer', fontFamily: 'Tajawal,sans-serif', fontWeight: 700, fontSize: '0.9rem' }}>
             🖨️ طباعة
           </button>
           <button onClick={() => window.close()} style={{ padding: '10px 18px', borderRadius: '8px', background: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0', cursor: 'pointer', fontFamily: 'Tajawal,sans-serif', fontWeight: 700, fontSize: '0.9rem' }}>

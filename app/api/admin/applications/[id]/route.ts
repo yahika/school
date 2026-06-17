@@ -33,12 +33,12 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           subject: `🎉 تهانينا! تم قبول طلب تسجيل ${app.studentNameAr}`,
           html: `
             <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 32px; border-radius: 16px;">
-              <div style="background: linear-gradient(135deg, #063d22, #0a5c36); padding: 32px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+              <div style="background: linear-gradient(135deg, #3b0764, #5b21b6); padding: 32px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
                 <h1 style="color: white; margin: 0; font-size: 24px;">🎓 أكاديمية النخبة بالإسكندرية</h1>
                 <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0;">Alexandria Elite Academy</p>
               </div>
               <div style="background: white; padding: 28px; border-radius: 12px; border: 1px solid #e2e8f0;">
-                <h2 style="color: #0a5c36; font-size: 22px; margin: 0 0 16px;">🎉 تهانينا، ${app.parentName}!</h2>
+                <h2 style="color: #5b21b6; font-size: 22px; margin: 0 0 16px;">🎉 تهانينا، ${app.parentName}!</h2>
                 <p style="color: #374151; font-size: 16px; line-height: 1.8; margin: 0 0 16px;">
                   يسعدنا إخبارك بأنه تم <strong>قبول طلب تسجيل</strong> الطالب/ة:
                 </p>
@@ -69,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
           subject: `طلب تسجيل ${app.studentNameAr} — نتيجة المراجعة`,
           html: `
             <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f8fafc; padding: 32px; border-radius: 16px;">
-              <div style="background: linear-gradient(135deg, #063d22, #0a5c36); padding: 32px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+              <div style="background: linear-gradient(135deg, #3b0764, #5b21b6); padding: 32px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
                 <h1 style="color: white; margin: 0; font-size: 24px;">🎓 أكاديمية النخبة بالإسكندرية</h1>
                 <p style="color: rgba(255,255,255,0.8); margin: 8px 0 0;">Alexandria Elite Academy</p>
               </div>

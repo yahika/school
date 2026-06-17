@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
@@ -30,6 +30,57 @@ const PAYMENT_STATUS_META: Record<string, { label: string; color: string; bg: st
 function fmtMoney(n: number) { return `${n.toLocaleString()} ج.م` }
 function todayStr() { return new Date().toISOString().slice(0, 10) }
 
+function printReceipt(f: FeeRow) {
+  const paidDate = f.paidAt ? new Date(f.paidAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"><title>إيصال رسوم</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Tajawal', Arial, sans-serif; background: white; color: #0f172a; }
+  .receipt { width: 380px; margin: 20px auto; padding: 28px 24px; border: 2px solid #e2e8f0; border-radius: 16px; }
+  .header { text-align: center; margin-bottom: 22px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 18px; }
+  .school-name { font-size: 1.3rem; font-weight: 900; color: #5b21b6; margin-bottom: 4px; }
+  .receipt-title { font-size: 0.9rem; color: #64748b; }
+  .receipt-num { font-size: 0.78rem; color: #94a3b8; margin-top: 6px; }
+  .row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.88rem; }
+  .row:last-of-type { border-bottom: none; }
+  .label { color: #64748b; }
+  .value { font-weight: 700; color: #0f172a; }
+  .amount-box { background: #f5f3ff; border-radius: 12px; padding: 14px; text-align: center; margin: 18px 0; }
+  .amount-big { font-size: 1.7rem; font-weight: 900; color: #5b21b6; }
+  .amount-label { font-size: 0.78rem; color: #7c3aed; margin-top: 4px; }
+  .paid-stamp { text-align: center; margin-top: 16px; }
+  .stamp { display: inline-block; border: 3px solid #16a34a; color: #16a34a; border-radius: 8px; padding: 6px 22px; font-size: 1.1rem; font-weight: 900; transform: rotate(-5deg); }
+  .footer { text-align: center; margin-top: 20px; padding-top: 14px; border-top: 2px dashed #e2e8f0; font-size: 0.74rem; color: #94a3b8; }
+  @media print { body { margin: 0; } .receipt { border: none; width: 100%; } }
+</style></head>
+<body>
+<div class="receipt">
+  <div class="header">
+    <div class="school-name">المدرسة الأمريكية</div>
+    <div class="receipt-title">إيصال سداد رسوم دراسية</div>
+    <div class="receipt-num">رقم السجل: #${f.id}</div>
+  </div>
+  <div class="row"><span class="label">اسم الطالب</span><span class="value">${f.studentName}</span></div>
+  ${f.seatNumber ? `<div class="row"><span class="label">رقم الجلوس</span><span class="value">${f.seatNumber}</span></div>` : ''}
+  <div class="row"><span class="label">الصف الدراسي</span><span class="value">${f.gradeAr}</span></div>
+  <div class="row"><span class="label">العام الدراسي</span><span class="value">${f.academicYear}</span></div>
+  <div class="row"><span class="label">تاريخ السداد</span><span class="value">${paidDate}</span></div>
+  <div class="amount-box">
+    <div class="amount-big">${f.amount.toLocaleString()} ج.م</div>
+    <div class="amount-label">المبلغ المسدَّد</div>
+  </div>
+  <div class="paid-stamp"><span class="stamp">✓ مسدَّد</span></div>
+  <div class="footer">تم إصدار هذا الإيصال بتاريخ ${new Date().toLocaleDateString('ar-EG')} · المدرسة الأمريكية</div>
+</div>
+<script>window.onload = function() { window.print(); }</script>
+</body></html>`
+  const w = window.open('', '_blank', 'width=460,height=620')
+  if (w) { w.document.write(html); w.document.close() }
+}
+
 // ---------- shared bits ----------
 function Loading() {
   return <div style={{ textAlign: 'center', padding: '60px', color: '#64748b' }}><span className="spinner" /> جارٍ التحميل...</div>
@@ -45,7 +96,7 @@ function Empty({ icon, text }: { icon: string; text: string }) {
 function StatCard({ icon, label, value, sub, color }: { icon: string; label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="card" style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#0a5c36') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#5b21b6') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: color ?? '#0f172a', lineHeight: 1.1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>{label}{sub ? <span style={{ color: '#94a3b8' }}> · {sub}</span> : null}</div>
@@ -102,7 +153,7 @@ function OverviewTab() {
                       <span style={{ color: '#64748b' }}>{fmtMoney(g.collected)} / {fmtMoney(g.expected)}</span>
                     </div>
                     <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? '#15803d' : pct >= 50 ? '#0a5c36' : '#d97706', borderRadius: '999px' }} />
+                      <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? '#15803d' : pct >= 50 ? '#5b21b6' : '#d97706', borderRadius: '999px' }} />
                     </div>
                   </div>
                 )
@@ -268,6 +319,7 @@ function FeesTab({ notify }: { notify: Notify }) {
                     {f.paidAt ? <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>دُفع {new Date(f.paidAt).toLocaleDateString('ar-EG')}</div> : null}
                   </div>
                   <button onClick={() => togglePaid(f)} style={{ fontSize: '0.72rem', fontWeight: 700, padding: '5px 14px', borderRadius: '999px', background: m.bg, color: m.color, border: 'none', cursor: 'pointer' }}>{m.label} ↻</button>
+                  {f.isPaid && <button onClick={() => printReceipt(f)} className="btn-outline btn-sm" style={{ whiteSpace: 'nowrap' }}>🖨️ إيصال</button>}
                   <button onClick={() => remove(f)} className="btn-danger btn-sm">حذف</button>
                 </div>
               )
@@ -445,7 +497,7 @@ function ExpensesTab({ notify }: { notify: Notify }) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {expenses.map(x => (
-              <div key={x.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === x.id ? '2px solid #0a5c36' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+              <div key={x.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === x.id ? '2px solid #5b21b6' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                 <div style={{ flex: 1, minWidth: '200px' }}>
                   <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.9rem' }}>{x.description}</div>
                   <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>
@@ -573,7 +625,7 @@ function AccountsImportTab({ notify }: { notify: Notify }) {
       {/* Mode selector */}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '18px' }}>
         {([['assign','⚡ تعيين للكل'],['import','📥 استيراد Excel']] as [typeof mode, string][]).map(([k, label]) => (
-          <button key={k} onClick={() => setMode(k)} style={{ padding: '9px 22px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', fontFamily: 'inherit', cursor: 'pointer', background: mode === k ? '#0a5c36' : 'white', color: mode === k ? 'white' : '#374151', border: mode === k ? 'none' : '1px solid #e2e8f0' }}>{label}</button>
+          <button key={k} onClick={() => setMode(k)} style={{ padding: '9px 22px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem', fontFamily: 'inherit', cursor: 'pointer', background: mode === k ? '#5b21b6' : 'white', color: mode === k ? 'white' : '#374151', border: mode === k ? 'none' : '1px solid #e2e8f0' }}>{label}</button>
         ))}
       </div>
 
@@ -603,7 +655,7 @@ function AccountsImportTab({ notify }: { notify: Notify }) {
             <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
               onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
               onClick={() => fileRef.current?.click()}
-              style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+              style={{ border: `2px dashed ${dragOver ? '#5b21b6' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
               <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
               <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
               <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
@@ -684,6 +736,37 @@ function OverdueTab({ notify }: { notify: Notify }) {
     } finally { setSending(null) }
   }
 
+  function printOverdueList(list: OverdueRow[]) {
+    const rows = list.map(r =>
+      `<tr><td>${r.studentName}</td><td>${r.seatNumber ?? '—'}</td><td>${r.gradeAr}</td><td>${r.academicYear}</td><td>${r.amount.toLocaleString()} ج.م</td></tr>`
+    ).join('')
+    const total = list.reduce((s, r) => s + r.amount, 0)
+    const html = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>قائمة المتأخرين</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  body { font-family: 'Tajawal', Arial, sans-serif; padding: 24px; color: #0f172a; font-size: 13px; }
+  h2 { color: #5b21b6; margin-bottom: 4px; }
+  .meta { color: #64748b; font-size: 12px; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #5b21b6; color: white; padding: 9px 12px; text-align: right; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .total { font-weight: 900; color: #dc2626; }
+  .footer { margin-top: 18px; color: #94a3b8; font-size: 11px; text-align: center; }
+</style></head><body>
+<h2>⚠️ قائمة الرسوم غير المسددة</h2>
+<div class="meta">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')} · إجمالي ${list.length} طالب</div>
+<table><thead><tr><th>اسم الطالب</th><th>رقم الجلوس</th><th>الصف</th><th>العام الدراسي</th><th>المبلغ</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot><tr><td colspan="4" style="font-weight:900;padding:9px 12px">الإجمالي</td><td class="total" style="padding:9px 12px">${total.toLocaleString()} ج.م</td></tr></tfoot>
+</table>
+<div class="footer">المدرسة الأمريكية — نظام إدارة الرسوم</div>
+<script>window.onload=function(){window.print()}</script>
+</body></html>`
+    const w = window.open('', '_blank', 'width=800,height=700')
+    if (w) { w.document.write(html); w.document.close() }
+  }
+
   async function sendAll() {
     const withPhone = filtered.filter(r => r.phone)
     if (!withPhone.length) { notify('لا يوجد طلاب متأخرون لديهم أرقام هاتف', 'error'); return }
@@ -704,6 +787,7 @@ function OverdueTab({ notify }: { notify: Notify }) {
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 بحث بالاسم أو الصف أو رقم الجلوس"
           style={{ flex: 1, minWidth: '220px', padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.88rem' }} />
         <div style={{ color: '#64748b', fontSize: '0.82rem' }}>⚠️ {filtered.length} طالب متأخر</div>
+        {filtered.length > 0 && <button onClick={() => printOverdueList(filtered)} className="btn-outline" style={{ whiteSpace: 'nowrap' }}>🖨️ طباعة القائمة</button>}
         {filtered.some(r => r.phone) && (
           <button onClick={sendAll} className="btn-primary" style={{ whiteSpace: 'nowrap' }}>📲 إرسال الكل</button>
         )}
@@ -718,7 +802,7 @@ function OverdueTab({ notify }: { notify: Notify }) {
                 <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>{r.gradeAr} · {r.academicYear} · {r.phone ? `📞 ${r.phone}` : <span style={{ color: '#f59e0b' }}>⚠️ بلا رقم هاتف</span>}</div>
               </div>
               <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#dc2626' }}>{r.amount.toLocaleString()} ج.م</div>
-              <button onClick={() => sendReminder(r)} disabled={!r.phone || sending === r.id} className="btn-outline btn-sm" style={{ whiteSpace: 'nowrap', color: r.phone ? '#0a5c36' : '#94a3b8' }}>
+              <button onClick={() => sendReminder(r)} disabled={!r.phone || sending === r.id} className="btn-outline btn-sm" style={{ whiteSpace: 'nowrap', color: r.phone ? '#5b21b6' : '#94a3b8' }}>
                 {sending === r.id ? '...' : '📲 تذكير'}
               </button>
             </div>

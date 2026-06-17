@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 
 interface AppStatus { id: number; studentNameAr: string; gradeApplying: string; status: string; createdAt: string; parentEmail: string }
@@ -34,7 +34,7 @@ export default function ApplicationStatus() {
   const statusLabel = { pending: L.pending, accepted: L.accepted, rejected: L.rejected }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#063d22 50%,#0a5c36)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#3b0764 50%,#5b21b6)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');`}</style>
       <div style={{ width: '100%', maxWidth: '480px' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -49,15 +49,15 @@ export default function ApplicationStatus() {
           <form onSubmit={check}>
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{L.email}</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
             </div>
             <div style={{ textAlign: 'center', color: '#94a3b8', margin: '12px 0', fontSize: '0.85rem', fontWeight: 600 }}>— {L.or} —</div>
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{L.appId}</label>
-              <input type="number" value={appId} onChange={e => setAppId(e.target.value)} placeholder="#" style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+              <input type="number" value={appId} onChange={e => setAppId(e.target.value)} placeholder="#" style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
             </div>
             {error && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '10px', padding: '12px', color: '#dc2626', fontSize: '0.85rem', marginBottom: '16px', textAlign: 'center' }}>{error}</div>}
-            <button type="submit" disabled={loading || (!email && !appId)} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: (loading || (!email && !appId)) ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: (loading || (!email && !appId)) ? 0.6 : 1 }}>
+            <button type="submit" disabled={loading || (!email && !appId)} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: (loading || (!email && !appId)) ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: (loading || (!email && !appId)) ? 0.6 : 1 }}>
               {loading ? '...' : `🔍 ${L.btn}`}
             </button>
           </form>

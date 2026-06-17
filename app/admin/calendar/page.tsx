@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface CalEvent { id: number; titleAr: string; titleEn: string; date: string; endDate: string | null; type: string; color: string | null; descriptionAr: string | null; descriptionEn: string | null; isPublic: boolean }
@@ -62,18 +62,18 @@ export default function CalendarAdmin() {
 
   return (
     <div style={{ padding: '24px', maxWidth: '960px', margin: '0 auto', fontFamily: 'Tajawal,sans-serif' }} dir="rtl">
-      {toast && <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: '#0a5c36', color: 'white', padding: '12px 28px', borderRadius: '999px', fontWeight: 600, zIndex: 9999 }}>{toast}</div>}
+      {toast && <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: '#5b21b6', color: 'white', padding: '12px 28px', borderRadius: '999px', fontWeight: 600, zIndex: 9999 }}>{toast}</div>}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📅 التقويم المدرسي</h1>
-        <a href="/calendar" target="_blank" style={{ marginRight: 'auto', padding: '6px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', color: '#0a5c36', textDecoration: 'none', fontSize: '0.82rem', fontWeight: 600 }}>🔗 عرض التقويم</a>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📅 التقويم المدرسي</h1>
+        <a href="/calendar" target="_blank" style={{ marginRight: 'auto', padding: '6px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', color: '#5b21b6', textDecoration: 'none', fontSize: '0.82rem', fontWeight: 600 }}>🔗 عرض التقويم</a>
       </div>
 
       {/* Form */}
-      <div style={{ background: 'white', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: editId !== null ? '2px solid #0a5c36' : '1px solid #e2e8f0' }}>
+      <div style={{ background: 'white', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: editId !== null ? '2px solid #5b21b6' : '1px solid #e2e8f0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ color: '#0a5c36', fontWeight: 700, margin: 0, fontSize: '1rem' }}>{editId !== null ? '✏️ تعديل الحدث' : '➕ إضافة حدث'}</h2>
+          <h2 style={{ color: '#5b21b6', fontWeight: 700, margin: 0, fontSize: '1rem' }}>{editId !== null ? '✏️ تعديل الحدث' : '➕ إضافة حدث'}</h2>
           {editId !== null && <button onClick={() => { setEditId(null); setForm(empty) }} style={{ padding: '5px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem', color: '#64748b' }}>✕ إلغاء</button>}
         </div>
         <form onSubmit={submit}>
@@ -102,7 +102,7 @@ export default function CalendarAdmin() {
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-end', padding: '8px 0' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}>
-                <input type="checkbox" checked={form.isPublic} onChange={e => setForm(p => ({ ...p, isPublic: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: '#0a5c36' }} />
+                <input type="checkbox" checked={form.isPublic} onChange={e => setForm(p => ({ ...p, isPublic: e.target.checked }))} style={{ width: '16px', height: '16px', accentColor: '#5b21b6' }} />
                 عام (يظهر للجميع)
               </label>
             </div>
@@ -117,7 +117,7 @@ export default function CalendarAdmin() {
               <textarea rows={2} dir="ltr" value={form.descriptionEn} onChange={e => setForm(p => ({ ...p, descriptionEn: e.target.value }))} style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' as const }} />
             </div>
           </div>
-          <button type="submit" disabled={saving} style={{ background: '#0a5c36', color: 'white', padding: '10px 28px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.7 : 1 }}>
+          <button type="submit" disabled={saving} style={{ background: '#5b21b6', color: 'white', padding: '10px 28px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', opacity: saving ? 0.7 : 1 }}>
             {saving ? '...' : editId !== null ? '💾 حفظ التعديلات' : '➕ إضافة'}
           </button>
         </form>
@@ -126,14 +126,14 @@ export default function CalendarAdmin() {
       {/* Events list grouped by month */}
       {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([month, evs]) => (
         <div key={month} style={{ marginBottom: '24px' }}>
-          <div style={{ fontWeight: 800, color: '#0a5c36', fontSize: '1rem', marginBottom: '10px', paddingBottom: '8px', borderBottom: '2px solid #f0fdf4' }}>
+          <div style={{ fontWeight: 800, color: '#5b21b6', fontSize: '1rem', marginBottom: '10px', paddingBottom: '8px', borderBottom: '2px solid #f0fdf4' }}>
             📅 {new Date(month + '-01').toLocaleDateString('ar-EG', { year: 'numeric', month: 'long' })}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {evs.map(ev => {
               const cfg = TYPE_CONFIG[ev.type]
               return (
-                <div key={ev.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: `1px solid #e2e8f0`, display: 'flex', alignItems: 'center', gap: '12px', borderRight: `4px solid ${cfg?.color ?? '#0a5c36'}` }}>
+                <div key={ev.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: `1px solid #e2e8f0`, display: 'flex', alignItems: 'center', gap: '12px', borderRight: `4px solid ${cfg?.color ?? '#5b21b6'}` }}>
                   <span style={{ fontSize: '1.3rem', flexShrink: 0 }}>{cfg?.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.9rem' }}>{ev.titleAr}</div>
@@ -145,7 +145,7 @@ export default function CalendarAdmin() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <button onClick={() => startEdit(ev)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid #0a5c36', color: '#0a5c36', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit', fontWeight: 600 }}>✏️</button>
+                    <button onClick={() => startEdit(ev)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid #5b21b6', color: '#5b21b6', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit', fontWeight: 600 }}>✏️</button>
                     <button onClick={() => del(ev.id)} style={{ padding: '5px 12px', borderRadius: '6px', border: '1px solid #dc2626', color: '#dc2626', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit' }}>🗑</button>
                   </div>
                 </div>

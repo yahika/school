@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
@@ -15,12 +15,14 @@ const TABS: { key: TabKey; label: string }[] = [
 ]
 
 // local copy matching the server export in app/api/staff/inventory/route.ts
-const INVENTORY_CATEGORIES = ['كتب', 'يونيفورم', 'قرطاسية', 'أخرى']
+const INVENTORY_CATEGORIES = ['كتب', 'يونيفورم', 'قرطاسية', 'مستلزمات مكتبية', 'نظافة', 'أخرى']
 
 const CATEGORY_META: Record<string, { icon: string; color: string }> = {
   'كتب': { icon: '📚', color: '#2563eb' },
   'يونيفورم': { icon: '👔', color: '#7c3aed' },
   'قرطاسية': { icon: '✏️', color: '#d97706' },
+  'مستلزمات مكتبية': { icon: '🖨️', color: '#0891b2' },
+  'نظافة': { icon: '🧹', color: '#16a34a' },
   'أخرى': { icon: '📦', color: '#64748b' },
 }
 function categoryMeta(c: string) { return CATEGORY_META[c] ?? CATEGORY_META['أخرى'] }
@@ -43,7 +45,7 @@ function Empty({ icon, text }: { icon: string; text: string }) {
 function StatCard({ icon, label, value, sub, color }: { icon: string; label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="card" style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#0a5c36') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#5b21b6') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: color ?? '#0f172a', lineHeight: 1.1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>{label}{sub ? <span style={{ color: '#94a3b8' }}> · {sub}</span> : null}</div>
@@ -75,7 +77,7 @@ function OverviewTab({ onOpenItem }: { onOpenItem: (id: number) => void }) {
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '22px' }}>
         <StatCard icon="📦" label="إجمالي الأصناف" value={data.totalItems} color="#2563eb" />
-        <StatCard icon="🔢" label="إجمالي الكميات بالمخزون" value={data.totalQuantity.toLocaleString()} color="#0a5c36" />
+        <StatCard icon="🔢" label="إجمالي الكميات بالمخزون" value={data.totalQuantity.toLocaleString()} color="#5b21b6" />
         <StatCard icon="⚠️" label="أصناف منخفضة المخزون" value={data.lowStockCount} color={data.lowStockCount > 0 ? '#dc2626' : '#15803d'} />
         <StatCard icon="💰" label="القيمة التقديرية للمخزون" value={fmtMoney(data.estimatedValue)} sub="حسب سعر الوحدة المسجَّل" color="#7c3aed" />
       </div>
@@ -156,6 +158,64 @@ const emptyForm = {
   quantity: '', unit: 'قطعة', minThreshold: '', unitPrice: '', supplier: '', notes: '',
 }
 
+function QuickSellModal({ item, onClose, onDone, notify }: { item: ItemRow; onClose: () => void; onDone: () => void; notify: Notify }) {
+  const [studentName, setStudentName] = useState('')
+  const [qty, setQty] = useState('1')
+  const [saving, setSaving] = useState(false)
+
+  async function sell() {
+    const q = Number(qty)
+    if (!studentName.trim()) { notify('اسم الطالب مطلوب', 'error'); return }
+    if (!Number.isFinite(q) || q <= 0) { notify('الكمية يجب أن تكون أكبر من صفر', 'error'); return }
+    if (q > item.quantity) { notify(`الكمية المطلوبة (${q}) تتجاوز الرصيد المتاح (${item.quantity})`, 'error'); return }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/staff/inventory/movements', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ itemId: item.id, type: 'out', quantity: q, date: new Date().toISOString().slice(0, 10), reason: `بيع لـ ${studentName.trim()}` }),
+      })
+      const d = await res.json()
+      if (!res.ok) { notify(d.error || 'تعذّر تسجيل البيع', 'error'); return }
+      notify(`✅ تم بيع ${q} ${item.unit} من «${item.nameAr}» لـ ${studentName.trim()}`)
+      onDone()
+    } finally { setSaving(false) }
+  }
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <div style={{ background: 'white', borderRadius: '18px', padding: '28px', width: '100%', maxWidth: '420px', boxShadow: '0 20px 60px rgba(0,0,0,0.2)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div>
+            <div style={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem' }}>🛒 بيع سريع</div>
+            <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '2px' }}>{item.nameAr} · الرصيد: {item.quantity} {item.unit}</div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem', color: '#94a3b8' }}>✕</button>
+        </div>
+        <div style={{ marginBottom: '14px' }}>
+          <label className="form-label">اسم الطالب *</label>
+          <input className="form-input" value={studentName} onChange={e => setStudentName(e.target.value)} placeholder="أدخل اسم الطالب" autoFocus />
+        </div>
+        <div style={{ marginBottom: '20px' }}>
+          <label className="form-label">الكمية *</label>
+          <input className="form-input" type="number" min="1" max={item.quantity} value={qty} onChange={e => setQty(e.target.value)} />
+        </div>
+        {item.unitPrice != null && (
+          <div style={{ background: '#f8fafc', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px', fontSize: '0.82rem', color: '#374151' }}>
+            الإجمالي: <strong>{(item.unitPrice * Number(qty || 0)).toLocaleString()} ج.م</strong> ({item.unitPrice.toLocaleString()} × {qty || 0})
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={sell} disabled={saving} className="btn-primary" style={{ flex: 1 }}>
+            {saving ? <><span className="spinner" /> جارٍ البيع...</> : 'تأكيد البيع'}
+          </button>
+          <button onClick={onClose} className="btn-outline">إلغاء</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
   notify: Notify
   openItemId: number | null
@@ -171,6 +231,7 @@ function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [sellItem, setSellItem] = useState<ItemRow | null>(null)
 
   const load = useCallback(() => {
     setLoading(true)
@@ -241,6 +302,8 @@ function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
   }
 
   return (
+    <>
+    {sellItem && <QuickSellModal item={sellItem} onClose={() => setSellItem(null)} onDone={() => { setSellItem(null); load() }} notify={notify} />}
     <div style={{ display: 'grid', gridTemplateColumns: activeId !== null ? 'minmax(0,1fr) 380px' : '1fr', gap: '20px', alignItems: 'start' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
@@ -264,7 +327,7 @@ function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
               const cm = categoryMeta(i.category)
               return (
                 <div key={i.id} onClick={() => setActiveId(i.id)}
-                  style={{ cursor: 'pointer', background: 'white', borderRadius: '12px', padding: '14px 18px', border: activeId === i.id ? '2px solid #0a5c36' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  style={{ cursor: 'pointer', background: 'white', borderRadius: '12px', padding: '14px 18px', border: activeId === i.id ? '2px solid #5b21b6' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                   <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: cm.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.05rem', flexShrink: 0 }}>{cm.icon}</div>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>{i.nameAr}{i.nameEn ? <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.78rem' }}> ({i.nameEn})</span> : null}</div>
@@ -272,7 +335,8 @@ function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
                   </div>
                   <span style={{ fontSize: '0.84rem', fontWeight: 800, color: i.isLow ? '#dc2626' : '#0f172a', whiteSpace: 'nowrap' }}>{i.quantity.toLocaleString()} {i.unit}</span>
                   <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '4px 12px', borderRadius: '999px', background: i.isLow ? '#fef2f2' : '#f0fdf4', color: i.isLow ? '#dc2626' : '#15803d', whiteSpace: 'nowrap' }}>{i.isLow ? '⚠️ منخفض' : '✓ متوفر'}</span>
-                  <button onClick={e => { e.stopPropagation(); onRecordMovement(i.id) }} className="btn-outline btn-sm">📦 حركة مخزون</button>
+                  <button onClick={e => { e.stopPropagation(); setSellItem(i) }} className="btn-primary btn-sm" style={{ whiteSpace: 'nowrap' }}>🛒 بيع</button>
+                  <button onClick={e => { e.stopPropagation(); onRecordMovement(i.id) }} className="btn-outline btn-sm">📦 حركة</button>
                 </div>
               )
             })}
@@ -348,6 +412,7 @@ function ItemsTab({ notify, openItemId, onConsumeOpen, onRecordMovement }: {
         </div>
       )}
     </div>
+    </>
   )
 }
 
@@ -553,7 +618,7 @@ function InventoryImportTab({ notify }: { notify: Notify }) {
         <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
           onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
           onClick={() => fileRef.current?.click()}
-          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          style={{ border: `2px dashed ${dragOver ? '#5b21b6' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
           <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📦</div>
           <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
@@ -578,7 +643,7 @@ function InventoryImportTab({ notify }: { notify: Notify }) {
                 <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
                   <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.nameAr}</td>
                   <td style={{ padding: '7px 12px' }}>{r.category}</td>
-                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#0a5c36' }}>{r.quantity}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#5b21b6' }}>{r.quantity}</td>
                   <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.unit || 'قطعة'}</td>
                   <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.unitPrice ? `${r.unitPrice} ج.م` : '—'}</td>
                 </tr>

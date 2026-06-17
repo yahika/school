@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -119,7 +119,7 @@ export default function ParentLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12 0%,#063d22 50%,#0a5c36 100%)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12 0%,#3b0764 50%,#5b21b6 100%)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap'); * { box-sizing: border-box; }`}</style>
 
       <div style={{ width: '100%', maxWidth: '480px' }}>
@@ -140,7 +140,7 @@ export default function ParentLogin() {
               <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>⏳</div>
               <h2 style={{ fontWeight: 800, color: '#0f172a', marginBottom: '12px', fontSize: '1.2rem' }}>{L.pendingTitle}</h2>
               <p style={{ color: '#64748b', lineHeight: 1.8, marginBottom: '24px', fontSize: '0.9rem' }}>{L.pendingBody}</p>
-              <button onClick={() => setTab('login')} style={{ padding: '11px 28px', background: '#0a5c36', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}>
+              <button onClick={() => setTab('login')} style={{ padding: '11px 28px', background: '#5b21b6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}>
                 {lang === 'ar' ? '← العودة لتسجيل الدخول' : '← Back to Login'}
               </button>
             </div>
@@ -153,7 +153,7 @@ export default function ParentLogin() {
                     padding: '10px', borderRadius: '9px', border: 'none', cursor: 'pointer',
                     fontFamily: 'inherit', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.2s',
                     background: tab === t ? 'white' : 'transparent',
-                    color: tab === t ? '#0a5c36' : '#64748b',
+                    color: tab === t ? '#5b21b6' : '#64748b',
                     boxShadow: tab === t ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
                   }}>
                     {t === 'login' ? L.login : L.register}
@@ -177,14 +177,14 @@ export default function ParentLogin() {
                   <div style={{ marginBottom: '14px' }}>
                     <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{L.loginEmail}</label>
                     <input type="email" required value={loginForm.email} onChange={e => setLoginForm(p => ({ ...p, email: e.target.value }))} style={inputStyle}
-                      onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                      onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                   </div>
                   <div style={{ marginBottom: '20px' }}>
                     <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{L.loginPassword}</label>
                     <input type="password" required value={loginForm.password} onChange={e => setLoginForm(p => ({ ...p, password: e.target.value }))} style={inputStyle}
-                      onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                      onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                   </div>
-                  <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
+                  <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
                     {loading ? '...' : L.loginBtn}
                   </button>
                   <div style={{ textAlign: 'center', marginTop: '12px' }}>
@@ -195,7 +195,7 @@ export default function ParentLogin() {
                 <form onSubmit={handleRegister}>
                   {/* Verification notice */}
                   <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', marginBottom: '20px' }}>
-                    <div style={{ fontWeight: 700, color: '#0a5c36', fontSize: '0.85rem', marginBottom: '4px' }}>🔐 {L.verifyTitle}</div>
+                    <div style={{ fontWeight: 700, color: '#5b21b6', fontSize: '0.85rem', marginBottom: '4px' }}>🔐 {L.verifyTitle}</div>
                     <div style={{ color: '#64748b', fontSize: '0.78rem', lineHeight: 1.6 }}>{L.verifyNote}</div>
                   </div>
 
@@ -214,7 +214,7 @@ export default function ParentLogin() {
                         <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '0.83rem', color: '#374151' }}>{f.label}</label>
                         {f.hint && <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginBottom: '4px' }}>{f.hint}</div>}
                         <input type={f.type} required value={(regForm as Record<string,string>)[f.key]} onChange={e => setRegForm(p => ({ ...p, [f.key]: e.target.value }))} style={{ ...inputStyle, background: 'white' }}
-                          onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                          onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                       </div>
                     ))}
                   </div>
@@ -238,7 +238,7 @@ export default function ParentLogin() {
                     ))}
                   </div>
 
-                  <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
+                  <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
                     {loading ? '...' : `🔐 ${L.registerBtn}`}
                   </button>
                 </form>

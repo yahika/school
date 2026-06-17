@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -298,7 +298,7 @@ export default function AdminDashboard() {
         {/* ── Live Section Stats ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '12px', marginBottom: '28px' }}>
           {[
-            { href: '/admin/applications', icon: '📝', label: 'طلبات التسجيل', count: liveCounts.applications, badge: liveCounts.pending > 0 ? `${liveCounts.pending} جديد` : null, color: '#0a5c36' },
+            { href: '/admin/applications', icon: '📝', label: 'طلبات التسجيل', count: liveCounts.applications, badge: liveCounts.pending > 0 ? `${liveCounts.pending} جديد` : null, color: '#5b21b6' },
             { href: '/admin/announcements', icon: '📢', label: 'الإعلانات', count: liveCounts.announcements, badge: null, color: '#2563eb' },
             { href: '/admin/schedule', icon: '📅', label: 'جدول الامتحانات', count: liveCounts.schedule, badge: null, color: '#7c3aed' },
             { href: '/admin/messages', icon: '📬', label: 'الرسائل', count: liveCounts.messages, badge: liveCounts.messages > 0 ? 'غير مقروء' : null, color: '#dc2626' },

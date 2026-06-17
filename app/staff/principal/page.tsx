@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -57,7 +57,7 @@ const BUS_STATUS: Record<string, { label: string; color: string; dot: string }> 
 const CATEGORY_ICONS: Record<string, string> = { 'كتب': '📚', 'يونيفورم': '👔', 'قرطاسية': '✏️', 'أخرى': '📦' }
 
 // ── Reusable section card ────────────────────────────────────────────────────
-function Section({ title, icon, accent = '#0a5c36', children, link, linkLabel }: {
+function Section({ title, icon, accent = '#5b21b6', children, link, linkLabel }: {
   title: string; icon: string; accent?: string; children: React.ReactNode
   link?: string; linkLabel?: string
 }) {
@@ -178,7 +178,7 @@ export default function PrincipalDashboard() {
 
       {/* ── HEADER ── */}
       <header style={{
-        background: 'linear-gradient(135deg,#0a5c36,#0d7a45)',
+        background: 'linear-gradient(135deg,#5b21b6,#6d28d9)',
         padding: '0 28px', height: '70px',
         display: 'flex', alignItems: 'center', gap: '14px',
         boxShadow: '0 4px 20px rgba(10,92,54,0.25)',
@@ -273,7 +273,7 @@ export default function PrincipalDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
             {/* ATTENDANCE */}
-            <Section title="الحضور والغياب اليوم" icon="📋" accent="#0a5c36" link="/staff/student-affairs" linkLabel="شؤون الطلبة">
+            <Section title="الحضور والغياب اليوم" icon="📋" accent="#5b21b6" link="/staff/student-affairs" linkLabel="شؤون الطلبة">
               {!att.taken ? (
                 <div style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
                   <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⏳</div>
@@ -283,7 +283,7 @@ export default function PrincipalDashboard() {
                 <div>
                   {/* big rate */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '18px' }}>
-                    <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'linear-gradient(135deg,#0a5c36,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'linear-gradient(135deg,#5b21b6,#22c55e)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <span style={{ color: 'white', fontWeight: 900, fontSize: '1.15rem' }}>{att.rate}%</span>
                     </div>
                     <div>
@@ -330,7 +330,7 @@ export default function PrincipalDashboard() {
                         {bus.driverName && <div style={{ color: '#64748b', fontSize: '0.76rem', marginBottom: '8px' }}>👤 {bus.driverName}</div>}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                           <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>{bus.riderCount} / {bus.capacity} راكب</span>
-                          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: fillPct > 90 ? '#dc2626' : '#0a5c36' }}>{fillPct}%</span>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: fillPct > 90 ? '#dc2626' : '#5b21b6' }}>{fillPct}%</span>
                         </div>
                         <ProgressBar pct={fillPct} color={fillPct > 90 ? '#ef4444' : '#22c55e'} />
                       </div>
@@ -470,7 +470,7 @@ export default function PrincipalDashboard() {
                   <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '4px', fontWeight: 600 }}>فصل بانتظار المراجعة</div>
                   {d.results.latestSemester && (
                     <div style={{ marginTop: '12px', background: '#f0fdf4', borderRadius: '10px', padding: '8px 10px', border: '1px solid #bbf7d0' }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#0a5c36' }}>آخر منشور</div>
+                      <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#5b21b6' }}>آخر منشور</div>
                       <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.82rem', marginTop: '2px' }}>{d.results.latestSemester.nameAr}</div>
                       <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{d.results.latestSemester.academicYear}</div>
                     </div>
@@ -499,11 +499,11 @@ export default function PrincipalDashboard() {
         {/* ── GRADE BREAKDOWN ── */}
         {d.gradeBreakdown.length > 0 && (
           <div style={{ marginTop: '20px' }}>
-            <Section title="توزيع الطلاب على الصفوف" icon="🎓" accent="#0a5c36">
+            <Section title="توزيع الطلاب على الصفوف" icon="🎓" accent="#5b21b6">
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 {d.gradeBreakdown.map(g => (
                   <div key={g.gradeAr} style={{ background: '#f0fdf4', borderRadius: '10px', padding: '10px 16px', border: '1px solid #bbf7d0', textAlign: 'center', minWidth: '80px' }}>
-                    <div style={{ fontWeight: 900, fontSize: '1.1rem', color: '#0a5c36' }}>{g.count}</div>
+                    <div style={{ fontWeight: 900, fontSize: '1.1rem', color: '#5b21b6' }}>{g.count}</div>
                     <div style={{ fontSize: '0.74rem', color: '#64748b', marginTop: '2px', fontWeight: 600 }}>{g.gradeAr}</div>
                   </div>
                 ))}
@@ -517,7 +517,7 @@ export default function PrincipalDashboard() {
           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem', marginBottom: '14px' }}>⚡ روابط سريعة</div>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {[
-              { label: 'شؤون الطلبة', icon: '🎓', href: '/staff/student-affairs', color: '#0a5c36' },
+              { label: 'شؤون الطلبة', icon: '🎓', href: '/staff/student-affairs', color: '#5b21b6' },
               { label: 'الباصات', icon: '🚌', href: '/staff/buses', color: '#2563eb' },
               { label: 'الحسابات', icon: '💰', href: '/staff/accounts', color: '#d97706' },
               { label: 'كونترول النتائج', icon: '📋', href: '/staff/results-control', color: '#0ea5e9' },

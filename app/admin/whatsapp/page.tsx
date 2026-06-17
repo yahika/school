@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 
 const STEPS = [
@@ -103,11 +103,11 @@ export default function WhatsAppAdmin() {
     <div style={{ padding: '24px', maxWidth: '860px', margin: '0 auto', fontFamily: 'Tajawal,sans-serif' }} dir="rtl">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>💬 بوت واتساب النتائج</h1>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>💬 بوت واتساب النتائج</h1>
       </div>
 
       {/* Hero banner */}
-      <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', borderRadius: '16px', padding: '28px', marginBottom: '28px', color: 'white' }}>
+      <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', borderRadius: '16px', padding: '28px', marginBottom: '28px', color: 'white' }}>
         <div style={{ fontSize: '2rem', marginBottom: '10px' }}>🤖</div>
         <div style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: '8px' }}>بوت الاستعلام عن النتائج عبر واتساب</div>
         <div style={{ opacity: 0.85, fontSize: '0.88rem', lineHeight: 1.8 }}>
@@ -123,12 +123,12 @@ export default function WhatsAppAdmin() {
 
       {/* Webhook URL */}
       <div style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-        <div style={{ fontWeight: 700, color: '#0a5c36', marginBottom: '10px' }}>🔗 رابط الـ Webhook</div>
+        <div style={{ fontWeight: 700, color: '#5b21b6', marginBottom: '10px' }}>🔗 رابط الـ Webhook</div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <code style={{ flex: 1, background: '#f1f5f9', padding: '10px 14px', borderRadius: '8px', fontSize: '0.82rem', color: '#0f172a', wordBreak: 'break-all', direction: 'ltr', textAlign: 'left' }}>
             {webhookUrl}
           </code>
-          <button onClick={copy} style={{ padding: '10px 18px', borderRadius: '8px', border: 'none', background: copied ? '#0a5c36' : '#f1f5f9', color: copied ? 'white' : '#0f172a', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
+          <button onClick={copy} style={{ padding: '10px 18px', borderRadius: '8px', border: 'none', background: copied ? '#5b21b6' : '#f1f5f9', color: copied ? 'white' : '#0f172a', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: '0.85rem', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
             {copied ? '✅ تم النسخ' : '📋 نسخ'}
           </button>
         </div>
@@ -139,7 +139,7 @@ export default function WhatsAppAdmin() {
 
       {/* Preview / test */}
       <div style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #e2e8f0', marginBottom: '28px' }}>
-        <div style={{ fontWeight: 700, color: '#0a5c36', marginBottom: '12px' }}>🔍 معاينة رد البوت لأي رقم جلوس</div>
+        <div style={{ fontWeight: 700, color: '#5b21b6', marginBottom: '12px' }}>🔍 معاينة رد البوت لأي رقم جلوس</div>
         <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
           <input
             value={testSeat}
@@ -148,7 +148,7 @@ export default function WhatsAppAdmin() {
             style={{ flex: 1, padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontFamily: 'inherit', fontSize: '0.9rem' }}
             onKeyDown={e => e.key === 'Enter' && previewBot()}
           />
-          <button onClick={previewBot} disabled={testing || !testSeat.trim()} style={{ padding: '9px 20px', borderRadius: '8px', border: 'none', background: '#0a5c36', color: 'white', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, opacity: testing || !testSeat.trim() ? 0.6 : 1 }}>
+          <button onClick={previewBot} disabled={testing || !testSeat.trim()} style={{ padding: '9px 20px', borderRadius: '8px', border: 'none', background: '#5b21b6', color: 'white', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700, opacity: testing || !testSeat.trim() ? 0.6 : 1 }}>
             {testing ? '...' : 'معاينة'}
           </button>
         </div>
@@ -165,14 +165,14 @@ export default function WhatsAppAdmin() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
         {STEPS.map((step, i) => (
           <div key={i} style={{ background: 'white', borderRadius: '12px', padding: '16px 20px', border: '1px solid #e2e8f0', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#0a5c36', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.95rem', flexShrink: 0 }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#5b21b6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.95rem', flexShrink: 0 }}>
               {step.num}
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: '3px' }}>{step.title}</div>
               <div style={{ color: '#64748b', fontSize: '0.84rem', lineHeight: 1.6 }}>{step.body}</div>
               {step.link && (
-                <a href={step.link} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: '7px', color: '#0a5c36', fontWeight: 600, fontSize: '0.81rem', textDecoration: 'none' }}>
+                <a href={step.link} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: '7px', color: '#5b21b6', fontWeight: 600, fontSize: '0.81rem', textDecoration: 'none' }}>
                   {step.linkLabel}
                 </a>
               )}

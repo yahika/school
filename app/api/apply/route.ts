@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
           to: process.env.GMAIL_USER,
           subject: `📝 طلب تسجيل جديد — ${studentNameAr}`,
           html: `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:500px;padding:24px;background:#f8fafc;border-radius:12px">
-            <h2 style="color:#0a5c36;margin:0 0 16px">📝 طلب تسجيل جديد</h2>
+            <h2 style="color:#5b21b6;margin:0 0 16px">📝 طلب تسجيل جديد</h2>
             <div style="background:white;padding:20px;border-radius:10px;border:1px solid #e2e8f0">
               <p><strong>اسم الطالب:</strong> ${studentNameAr}${studentNameEn ? ` / ${studentNameEn}` : ''}</p>
               <p><strong>الصف المطلوب:</strong> ${gradeApplying}</p>
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
               ${parentEmail ? `<p><strong>البريد:</strong> ${parentEmail}</p>` : ''}
               ${notes ? `<p><strong>ملاحظات:</strong> ${notes}</p>` : ''}
             </div>
-            <p style="color:#0a5c36;font-weight:600;margin-top:16px">رقم الطلب: #${app.id}</p>
+            <p style="color:#5b21b6;font-weight:600;margin-top:16px">رقم الطلب: #${app.id}</p>
             <p style="color:#94a3b8;font-size:0.8rem">يمكنك مراجعة الطلب من لوحة التحكم</p>
           </div>`,
         })

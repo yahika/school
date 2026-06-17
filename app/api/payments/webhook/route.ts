@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
 import { verifyPaymobHmac } from '@/lib/paymob'
@@ -121,7 +121,7 @@ async function sendReceiptEmail(payment: ReceiptPayment, fee: ReceiptFee) {
       to: parent.email,
       subject: `✅ تم استلام دفعتك — ${fee.studentName}`,
       html: `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:500px;padding:24px;background:#f8fafc;border-radius:12px">
-        <h2 style="color:#0a5c36;margin:0 0 16px">✅ تم تأكيد الدفع بنجاح</h2>
+        <h2 style="color:#5b21b6;margin:0 0 16px">✅ تم تأكيد الدفع بنجاح</h2>
         <div style="background:white;padding:20px;border-radius:10px;border:1px solid #e2e8f0">
           <p><strong>الطالب:</strong> ${fee.studentName}</p>
           <p><strong>العام الدراسي:</strong> ${fee.academicYear}</p>

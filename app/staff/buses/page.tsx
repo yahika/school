@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
@@ -34,7 +34,7 @@ function Empty({ icon, text }: { icon: string; text: string }) {
 function StatCard({ icon, label, value, sub, color }: { icon: string; label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="card" style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#0a5c36') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#5b21b6') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: color ?? '#0f172a', lineHeight: 1.1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>{label}{sub ? <span style={{ color: '#94a3b8' }}> · {sub}</span> : null}</div>
@@ -102,7 +102,7 @@ function OverviewTab() {
               {data.gradeBreakdown.map(g => (
                 <div key={g.gradeAr} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
                   <span style={{ fontWeight: 600, color: '#374151', fontSize: '0.88rem' }}>{g.gradeAr}</span>
-                  <span style={{ fontWeight: 800, color: '#0a5c36', fontSize: '0.9rem' }}>{g.count} طالب</span>
+                  <span style={{ fontWeight: 800, color: '#5b21b6', fontSize: '0.9rem' }}>{g.count} طالب</span>
                 </div>
               ))}
             </div>
@@ -127,7 +127,7 @@ function OverviewTab() {
                     </span>
                   </div>
                   <div style={{ height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? '#dc2626' : pct >= 80 ? '#d97706' : '#0a5c36', borderRadius: '999px' }} />
+                    <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? '#dc2626' : pct >= 80 ? '#d97706' : '#5b21b6', borderRadius: '999px' }} />
                   </div>
                 </div>
               )
@@ -246,8 +246,8 @@ function FleetTab({ notify, onManageRiders }: { notify: Notify; onManageRiders: 
             {buses.map(b => {
               const m = BUS_STATUS_META[b.status] ?? BUS_STATUS_META.active
               return (
-                <div key={b.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === b.id ? '2px solid #0a5c36' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-                  <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.1rem', flexShrink: 0 }}>🚌</div>
+                <div key={b.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === b.id ? '2px solid #5b21b6' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.1rem', flexShrink: 0 }}>🚌</div>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>{b.code} {b.plateNumber ? <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.8rem' }}>· {b.plateNumber}</span> : null}</div>
                     <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>
@@ -255,7 +255,7 @@ function FleetTab({ notify, onManageRiders }: { notify: Notify; onManageRiders: 
                     </div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#0a5c36' }}>{b.riderCount}/{b.capacity || '∞'}</div>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#5b21b6' }}>{b.riderCount}/{b.capacity || '∞'}</div>
                     <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>راكب</div>
                   </div>
                   <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '4px 12px', borderRadius: '999px', background: m.bg, color: m.color }}>{m.label}</span>
@@ -323,6 +323,40 @@ function FleetTab({ notify, onManageRiders }: { notify: Notify; onManageRiders: 
 interface RiderRow { id: number; busId: number; seatNumber: string; studentName: string; gradeAr: string; pickupPoint: string | null; phone: string | null; isActive: boolean }
 type RiderForm = { seatNumber: string; studentName: string; gradeAr: string; pickupPoint: string; phone: string }
 const EMPTY_RIDER_FORM: RiderForm = { seatNumber: '', studentName: '', gradeAr: '', pickupPoint: '', phone: '' }
+
+function printBusRoster(bus: BusRow, riders: RiderRow[]) {
+  const rows = riders.map((r, i) =>
+    `<tr><td>${i + 1}</td><td>${r.seatNumber}</td><td>${r.studentName}</td><td>${r.gradeAr}</td><td>${r.pickupPoint ?? '—'}</td><td>${r.phone ?? '—'}</td></tr>`
+  ).join('')
+  const html = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>كشف الباص ${bus.code}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  body { font-family: 'Tajawal', Arial, sans-serif; padding: 24px; color: #0f172a; font-size: 13px; }
+  h2 { color: #5b21b6; margin-bottom: 4px; }
+  .meta { color: #64748b; font-size: 12px; margin-bottom: 6px; }
+  .info { display: flex; gap: 24px; margin-bottom: 18px; font-size: 12px; background: #f8fafc; padding: 10px 14px; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #5b21b6; color: white; padding: 9px 12px; text-align: right; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .footer { margin-top: 18px; color: #94a3b8; font-size: 11px; text-align: center; }
+</style></head><body>
+<h2>🚌 كشف ركاب — باص ${bus.code}</h2>
+<div class="info">
+  <span>👤 السائق: <strong>${bus.driverName ?? '—'}</strong></span>
+  <span>📞 هاتف السائق: <strong>${bus.driverPhone ?? '—'}</strong></span>
+  <span>🗺️ خط السير: <strong>${bus.routeAr ?? '—'}</strong></span>
+  <span>💺 الطاقة الاستيعابية: <strong>${bus.capacity}</strong></span>
+</div>
+<div class="meta">إجمالي الركاب: <strong>${riders.length}</strong></div>
+<table><thead><tr><th>#</th><th>رقم الجلوس</th><th>اسم الطالب</th><th>الصف</th><th>نقطة الركوب</th><th>هاتف</th></tr></thead>
+<tbody>${rows}</tbody></table>
+<div class="footer">تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')} · المدرسة الأمريكية</div>
+<script>window.onload=function(){window.print()}</script>
+</body></html>`
+  const w = window.open('', '_blank', 'width=900,height=700')
+  if (w) { w.document.write(html); w.document.close() }
+}
 
 function RidersTab({ notify, selectedBusId, setSelectedBusId }: { notify: Notify; selectedBusId: number | null; setSelectedBusId: (id: number | null) => void }) {
   const [buses, setBuses] = useState<BusRow[]>([])
@@ -398,7 +432,12 @@ function RidersTab({ notify, selectedBusId, setSelectedBusId }: { notify: Notify
             <span>💺 الإشغال: <strong style={{ color: '#374151' }}>{bus.riderCount}/{bus.capacity || '∞'}</strong></span>
           </div>
         )}
-        {bus && <button onClick={openCreate} className="btn-primary" style={{ whiteSpace: 'nowrap', marginInlineStart: 'auto' }}>+ إضافة راكب</button>}
+        {bus && (
+          <div style={{ display: 'flex', gap: '8px', marginInlineStart: 'auto' }}>
+            <button onClick={() => printBusRoster(bus, riders)} className="btn-outline" style={{ whiteSpace: 'nowrap' }}>🖨️ كشف الباص</button>
+            <button onClick={openCreate} className="btn-primary" style={{ whiteSpace: 'nowrap' }}>+ إضافة راكب</button>
+          </div>
+        )}
       </div>
 
       {!selectedBusId ? (
@@ -520,7 +559,7 @@ function BusImportTab({ notify }: { notify: Notify }) {
         <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
           onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
           onClick={() => fileRef.current?.click()}
-          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          style={{ border: `2px dashed ${dragOver ? '#5b21b6' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
           <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
           <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
@@ -543,7 +582,7 @@ function BusImportTab({ notify }: { notify: Notify }) {
               </tr></thead>
               <tbody>{preview.slice(0, 10).map((r, i) => (
                 <tr key={i} style={{ borderTop: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#0a5c36' }}>{r.busCode}</td>
+                  <td style={{ padding: '7px 12px', fontWeight: 700, color: '#5b21b6' }}>{r.busCode}</td>
                   <td style={{ padding: '7px 12px', color: '#64748b' }}>{r.seatNumber}</td>
                   <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.studentName}</td>
                   <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>

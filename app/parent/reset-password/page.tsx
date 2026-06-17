@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 
 export default function ResetPassword() {
@@ -31,7 +31,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#063d22 50%,#0a5c36)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#3b0764 50%,#5b21b6)', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} dir={isRtl ? 'rtl' : 'ltr'}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');`}</style>
       <div style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -47,7 +47,7 @@ export default function ResetPassword() {
             <div style={{ textAlign: 'center', padding: '20px 0' }}>
               <div style={{ fontSize: '3rem', marginBottom: '12px' }}>✅</div>
               <div style={{ fontWeight: 700, color: '#15803d', marginBottom: '20px' }}>{L.ok}</div>
-              <a href="/parent/login" style={{ display: 'inline-block', padding: '12px 28px', background: '#0a5c36', color: 'white', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>{L.login}</a>
+              <a href="/parent/login" style={{ display: 'inline-block', padding: '12px 28px', background: '#5b21b6', color: 'white', borderRadius: '10px', textDecoration: 'none', fontWeight: 700 }}>{L.login}</a>
             </div>
           ) : (
             <form onSubmit={submit}>
@@ -58,15 +58,15 @@ export default function ResetPassword() {
               ].map(f => (
                 <div key={f.key} style={{ marginBottom: '14px' }}>
                   <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{f.label}</label>
-                  <input type={f.type} required value={f.val} onChange={e => f.set(e.target.value)} style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+                  <input type={f.type} required value={f.val} onChange={e => f.set(e.target.value)} style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
                 </div>
               ))}
               {error && <div style={{ background: '#fef2f2', border: '1px solid #fca5a5', borderRadius: '8px', padding: '10px', color: '#dc2626', fontSize: '0.85rem', marginBottom: '14px' }}>{error}</div>}
-              <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
+              <button type="submit" disabled={loading} style={{ width: '100%', padding: '12px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
                 {loading ? '...' : `🔑 ${L.btn}`}
               </button>
               <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                <a href="/parent/login" style={{ color: '#0a5c36', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 600 }}>{L.login}</a>
+                <a href="/parent/login" style={{ color: '#5b21b6', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 600 }}>{L.login}</a>
               </div>
             </form>
           )}

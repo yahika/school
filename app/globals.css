@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,9 +6,9 @@
 
 /* ─── CSS Variables ──────────────────────────────────────────────────────── */
 :root {
-  --c-primary:       #0a5c36;
-  --c-primary-light: #1a7a4a;
-  --c-primary-dark:  #063d22;
+  --c-primary:       #5b21b6;
+  --c-primary-light: #7c3aed;
+  --c-primary-dark:  #3b0764;
   --c-gold:          #c8972b;
   --c-gold-light:    #e5b850;
   --c-gold-dark:     #a07820;
@@ -62,7 +62,7 @@ body[dir="ltr"] {
 
 /* ─── Hero Section ───────────────────────────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, var(--c-primary-dark) 0%, var(--c-primary) 50%, #0d7a45 100%);
+  background: linear-gradient(135deg, var(--c-primary-dark) 0%, var(--c-primary) 50%, #6d28d9 100%);
   position: relative;
   overflow: hidden;
 }
@@ -150,7 +150,7 @@ body[dir="ltr"] {
 
 .form-input:focus {
   border-color: var(--c-primary-light);
-  box-shadow: 0 0 0 3px rgba(10,37,88,0.1);
+  box-shadow: 0 0 0 3px rgba(91,33,182,0.1);
 }
 
 .form-input::placeholder { color: var(--c-text-light); }
@@ -171,12 +171,12 @@ body[dir="ltr"] {
   font-family: inherit;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-  box-shadow: 0 4px 12px rgba(10,37,88,0.3);
+  box-shadow: 0 4px 12px rgba(91,33,182,0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(10,37,88,0.4);
+  box-shadow: 0 6px 16px rgba(91,33,182,0.4);
 }
 
 .btn-primary:active:not(:disabled) { transform: translateY(0); }
@@ -343,7 +343,7 @@ body[dir="ltr"] {
 
 .drop-zone:hover, .drop-zone.drag-over {
   border-color: var(--c-primary-light);
-  background: rgba(10,37,88,0.03);
+  background: rgba(91,33,182,0.03);
 }
 
 /* ─── Language Toggle ────────────────────────────────────────────────────── */
@@ -434,7 +434,7 @@ body[dir="ltr"] {
   .result-header {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    background: #0a5c36 !important;
+    background: #5b21b6 !important;
   }
 
   @page {

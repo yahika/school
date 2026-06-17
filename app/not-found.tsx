@@ -1,8 +1,8 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#063d22 50%,#0a5c36)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'Tajawal, sans-serif', textAlign: 'center' }} dir="rtl">
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(160deg,#041f12,#3b0764 50%,#5b21b6)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'Tajawal, sans-serif', textAlign: 'center' }} dir="rtl">
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap');`}</style>
       <div>
         <div style={{ fontSize: '8rem', fontWeight: 900, color: 'rgba(200,151,43,0.3)', lineHeight: 1, marginBottom: '8px' }}>404</div>

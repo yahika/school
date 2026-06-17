@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface StaffMember {
@@ -118,8 +118,8 @@ export default function StaffAdminPage() {
     <div style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto', fontFamily: 'Tajawal,sans-serif' }} dir="rtl">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>🗝️ حسابات العاملين بالمدرسة</h1>
-        <span style={{ background: '#f0fdf4', color: '#0a5c36', fontWeight: 700, fontSize: '0.85rem', padding: '4px 14px', borderRadius: '999px', border: '1px solid #bbf7d0' }}>{staff.length} حساب</span>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>🗝️ حسابات العاملين بالمدرسة</h1>
+        <span style={{ background: '#f0fdf4', color: '#5b21b6', fontWeight: 700, fontSize: '0.85rem', padding: '4px 14px', borderRadius: '999px', border: '1px solid #bbf7d0' }}>{staff.length} حساب</span>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث بالاسم أو اسم المستخدم أو القسم"
           style={{ marginInlineStart: 'auto', padding: '8px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.88rem', minWidth: '260px' }} />
         <button onClick={openCreate} className="btn-primary" style={{ whiteSpace: 'nowrap' }}>+ إضافة حساب جديد</button>
@@ -154,10 +154,10 @@ export default function StaffAdminPage() {
                 return (
                   <div key={s.id} style={{
                     background: 'white', borderRadius: '12px', padding: '16px 20px',
-                    border: editing?.id === s.id ? '2px solid #0a5c36' : '1px solid #e2e8f0',
+                    border: editing?.id === s.id ? '2px solid #5b21b6' : '1px solid #e2e8f0',
                     display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap',
                   }}>
-                    <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.2rem', flexShrink: 0 }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.2rem', flexShrink: 0 }}>
                       {info.icon}
                     </div>
                     <div style={{ flex: 1, minWidth: '160px' }}>
@@ -189,7 +189,7 @@ export default function StaffAdminPage() {
           <div style={{ position: 'sticky', top: '24px' }}>
             <div className="card" style={{ padding: '22px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, color: '#0a5c36', fontSize: '1.05rem', fontWeight: 800 }}>
+                <h3 style={{ margin: 0, color: '#5b21b6', fontSize: '1.05rem', fontWeight: 800 }}>
                   {editing ? '✏️ تعديل حساب' : '➕ حساب جديد'}
                 </h3>
                 <button onClick={closeForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '1rem' }}>✕</button>

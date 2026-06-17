@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface Msg { id: number; name: string; email: string; phone: string; message: string; isRead: boolean; createdAt: string }
@@ -41,7 +41,7 @@ export default function MessagesAdmin() {
         <div onClick={() => setSelected(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '24px', maxWidth: '560px', width: '100%', boxShadow: '0 24px 60px rgba(0,0,0,0.3)', overflow: 'hidden', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
             {/* Header */}
-            <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '24px 28px', color: 'white' }}>
+            <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '24px 28px', color: 'white' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '4px' }}>{selected.name}</div>
@@ -55,7 +55,7 @@ export default function MessagesAdmin() {
 
             {/* Contact info */}
             <div style={{ padding: '20px 28px', borderBottom: '1px solid #f1f5f9', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <a href={`tel:${selected.phone}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0fdf4', borderRadius: '999px', textDecoration: 'none', color: '#0a5c36', fontWeight: 700, fontSize: '0.88rem', border: '1px solid #bbf7d0' }}>
+              <a href={`tel:${selected.phone}`} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: '#f0fdf4', borderRadius: '999px', textDecoration: 'none', color: '#5b21b6', fontWeight: 700, fontSize: '0.88rem', border: '1px solid #bbf7d0' }}>
                 📞 {selected.phone}
               </a>
               {selected.email && (
@@ -85,7 +85,7 @@ export default function MessagesAdmin() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>
           📬 رسائل التواصل
           {unread > 0 && <span style={{ background: '#dc2626', color: 'white', borderRadius: '999px', padding: '2px 10px', fontSize: '0.75rem', marginRight: '8px' }}>{unread} جديد</span>}
         </h1>
@@ -95,7 +95,7 @@ export default function MessagesAdmin() {
       {/* Filter tabs */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
-          { key: 'all', label: `الكل (${msgs.length})`, color: '#0a5c36' },
+          { key: 'all', label: `الكل (${msgs.length})`, color: '#5b21b6' },
           { key: 'unread', label: `غير مقروء (${unread})`, color: '#dc2626' },
           { key: 'read', label: `مقروء (${msgs.length - unread})`, color: '#64748b' },
         ].map(f => (
@@ -118,14 +118,14 @@ export default function MessagesAdmin() {
             onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.boxShadow = msg.isRead ? 'none' : '0 2px 12px rgba(10,92,54,0.08)'; (e.currentTarget as HTMLDivElement).style.transform = 'none' }}
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: msg.isRead ? 'linear-gradient(135deg,#94a3b8,#64748b)' : 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>👤</div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: msg.isRead ? 'linear-gradient(135deg,#94a3b8,#64748b)' : 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>👤</div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                   <span style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>{msg.name}</span>
                   <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>·</span>
                   <span style={{ color: '#64748b', fontSize: '0.8rem' }}>{msg.phone}</span>
                   {msg.email && <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>{msg.email}</span>}
-                  {!msg.isRead && <span style={{ background: '#0a5c36', color: 'white', padding: '2px 8px', borderRadius: '999px', fontSize: '0.68rem', fontWeight: 700 }}>● جديد</span>}
+                  {!msg.isRead && <span style={{ background: '#5b21b6', color: 'white', padding: '2px 8px', borderRadius: '999px', fontSize: '0.68rem', fontWeight: 700 }}>● جديد</span>}
                 </div>
                 <p style={{ color: '#475569', margin: 0, fontSize: '0.88rem', lineHeight: 1.6, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '600px' }}>
                   {msg.message}

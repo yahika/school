@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface Announcement { id: number; titleAr: string; titleEn: string; bodyAr: string; bodyEn: string; publishedAt: string }
 
-const COLORS = ['#0a5c36','#2563eb','#c8972b','#7c3aed','#dc2626','#0369a1']
+const COLORS = ['#5b21b6','#2563eb','#c8972b','#7c3aed','#dc2626','#0369a1']
 
 export default function NewsPage() {
   const [lang, setLang] = useState<'ar'|'en'>('ar')
@@ -49,7 +49,7 @@ export default function NewsPage() {
               </p>
             </div>
             <div style={{ padding: '16px 32px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setSelected(null)} style={{ padding: '10px 28px', background: '#0a5c36', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}>
+              <button onClick={() => setSelected(null)} style={{ padding: '10px 28px', background: '#5b21b6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}>
                 {L.close}
               </button>
             </div>
@@ -57,7 +57,7 @@ export default function NewsPage() {
         </div>
       )}
 
-      <nav style={{ background: '#0a5c36', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{ background: '#5b21b6', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: 'linear-gradient(135deg,#c8972b,#a07820)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: 'white' }}>AEA</div>
           <a href="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem' }}>{L.home}</a>
@@ -67,7 +67,7 @@ export default function NewsPage() {
         </button>
       </nav>
 
-      <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '56px 24px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '56px 24px', textAlign: 'center' }}>
         <h1 style={{ color: 'white', fontSize: 'clamp(1.5rem,4vw,2.2rem)', fontWeight: 900, margin: '0 0 8px' }}>📢 {L.title}</h1>
         <p style={{ color: 'rgba(255,255,255,0.55)', margin: 0, fontSize: '0.95rem' }}>
           {isRtl ? 'انقر على أي إعلان لقراءة التفاصيل الكاملة' : 'Click any announcement to read the full details'}

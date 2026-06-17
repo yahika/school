@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -91,7 +91,7 @@ export default function ParentDashboard() {
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ width: '48px', height: '48px', border: '4px solid #e2e8f0', borderTopColor: '#0a5c36', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
+        <div style={{ width: '48px', height: '48px', border: '4px solid #e2e8f0', borderTopColor: '#5b21b6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 16px' }} />
         <div style={{ color: '#64748b', fontFamily: 'Tajawal,sans-serif' }}>جاري التحميل...</div>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
@@ -101,7 +101,7 @@ export default function ParentDashboard() {
   if (!parent) return null
 
   const latestResult = results[0]
-  const gradeColor = (pct: number) => pct >= 90 ? '#15803d' : pct >= 75 ? '#0a5c36' : pct >= 60 ? '#d97706' : pct >= 50 ? '#ea580c' : '#dc2626'
+  const gradeColor = (pct: number) => pct >= 90 ? '#15803d' : pct >= 75 ? '#5b21b6' : pct >= 60 ? '#d97706' : pct >= 50 ? '#ea580c' : '#dc2626'
   const gradeLabel = (letter: string) => {
     const map: Record<string,string> = { 'A+': 'ممتاز+', 'A': 'ممتاز', 'A-': 'ممتاز-', 'B+': 'جيد جداً+', 'B': 'جيد جداً', 'B-': 'جيد جداً-', 'C+': 'جيد+', 'C': 'جيد', 'C-': 'جيد-', 'D+': 'مقبول+', 'D': 'مقبول', 'E': 'ضعيف', 'F': 'راسب' }
     return lang === 'ar' ? (map[letter] ?? letter) : letter
@@ -128,7 +128,7 @@ export default function ParentDashboard() {
       `}</style>
 
       {/* Top bar */}
-      <header style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 16px rgba(0,0,0,0.2)', position: 'sticky', top: 0, zIndex: 100 }}>
+      <header style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 16px rgba(0,0,0,0.2)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'linear-gradient(135deg,#c8972b,#a07820)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.75rem', color: 'white' }}>AEA</div>
@@ -154,12 +154,12 @@ export default function ParentDashboard() {
         <aside>
           {/* Student card */}
           <div className="card" style={{ padding: '20px', marginBottom: '16px', textAlign: 'center' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.6rem' }}>👨‍🎓</div>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '1.6rem' }}>👨‍🎓</div>
             <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0f172a', marginBottom: '4px' }}>{parent.studentName}</div>
             <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: '12px' }}>{lang === 'ar' ? parent.gradeAr : parent.gradeEn}</div>
             <div style={{ background: '#f0fdf4', borderRadius: '8px', padding: '8px', border: '1px solid #bbf7d0' }}>
               <div style={{ fontSize: '0.7rem', color: '#64748b', marginBottom: '2px' }}>{isRtl ? 'رقم الجلوس' : 'Seat Number'}</div>
-              <div style={{ fontWeight: 800, color: '#0a5c36', fontSize: '1.1rem', letterSpacing: '0.05em' }}>{parent.seatNumber}</div>
+              <div style={{ fontWeight: 800, color: '#5b21b6', fontSize: '1.1rem', letterSpacing: '0.05em' }}>{parent.seatNumber}</div>
             </div>
             {latestResult && (
               <div style={{ marginTop: '12px', background: '#f8fafc', borderRadius: '8px', padding: '10px' }}>
@@ -177,11 +177,11 @@ export default function ParentDashboard() {
                 width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '12px 14px', borderRadius: '10px', border: 'none',
                 background: activeTab === item.key ? 'linear-gradient(135deg,#f0fdf4,#dcfce7)' : 'transparent',
-                color: activeTab === item.key ? '#0a5c36' : '#64748b',
+                color: activeTab === item.key ? '#5b21b6' : '#64748b',
                 fontWeight: activeTab === item.key ? 700 : 500,
                 fontFamily: 'inherit', fontSize: '0.88rem', cursor: 'pointer',
-                borderRight: activeTab === item.key && isRtl ? '3px solid #0a5c36' : 'none',
-                borderLeft: activeTab === item.key && !isRtl ? '3px solid #0a5c36' : 'none',
+                borderRight: activeTab === item.key && isRtl ? '3px solid #5b21b6' : 'none',
+                borderLeft: activeTab === item.key && !isRtl ? '3px solid #5b21b6' : 'none',
                 textAlign: isRtl ? 'right' : 'left',
               }}>
                 <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
@@ -203,7 +203,7 @@ export default function ParentDashboard() {
               {/* Quick stats */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
                 {[
-                  { icon: '📊', label: isRtl ? 'الفصول الدراسية' : 'Semesters', value: results.length, color: '#0a5c36' },
+                  { icon: '📊', label: isRtl ? 'الفصول الدراسية' : 'Semesters', value: results.length, color: '#5b21b6' },
                   { icon: '📢', label: isRtl ? 'الإعلانات' : 'Announcements', value: announcements.length, color: '#2563eb' },
                   { icon: '🎯', label: isRtl ? 'أحدث نسبة' : 'Latest Score', value: latestResult ? `${latestResult.percentage}%` : '—', color: latestResult ? gradeColor(latestResult.percentage) : '#64748b' },
                 ].map(s => (
@@ -240,17 +240,17 @@ export default function ParentDashboard() {
                         <div key={sub.nameAr}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                             <span style={{ fontSize: '0.83rem', fontWeight: 600, color: '#374151' }}>{lang === 'ar' ? sub.nameAr : sub.nameEn}</span>
-                            <span style={{ fontSize: '0.83rem', fontWeight: 700, color: passed ? '#0a5c36' : '#dc2626' }}>{sub.score}/{sub.maxScore}</span>
+                            <span style={{ fontSize: '0.83rem', fontWeight: 700, color: passed ? '#5b21b6' : '#dc2626' }}>{sub.score}/{sub.maxScore}</span>
                           </div>
                           <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '999px', overflow: 'hidden' }}>
-                            <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: passed ? (pct >= 85 ? '#0a5c36' : '#16a34a') : '#dc2626', transition: 'width 0.8s ease' }} />
+                            <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: passed ? (pct >= 85 ? '#5b21b6' : '#16a34a') : '#dc2626', transition: 'width 0.8s ease' }} />
                           </div>
                         </div>
                       )
                     })}
                   </div>
 
-                  <button onClick={() => setActiveTab('results')} style={{ marginTop: '20px', padding: '10px 24px', background: '#0a5c36', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.88rem' }}>
+                  <button onClick={() => setActiveTab('results')} style={{ marginTop: '20px', padding: '10px 24px', background: '#5b21b6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.88rem' }}>
                     {isRtl ? 'عرض كل النتائج ←' : 'View All Results →'}
                   </button>
                 </div>
@@ -294,8 +294,8 @@ export default function ParentDashboard() {
                     {results.map(r => (
                       <button key={r.id} onClick={() => setSelectedResult(r)} style={{
                         padding: '8px 18px', borderRadius: '999px', border: '2px solid',
-                        borderColor: selectedResult?.id === r.id ? '#0a5c36' : '#e2e8f0',
-                        background: selectedResult?.id === r.id ? '#0a5c36' : 'white',
+                        borderColor: selectedResult?.id === r.id ? '#5b21b6' : '#e2e8f0',
+                        background: selectedResult?.id === r.id ? '#5b21b6' : 'white',
                         color: selectedResult?.id === r.id ? 'white' : '#64748b',
                         fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem',
                         transition: 'all 0.2s',
@@ -333,7 +333,7 @@ export default function ParentDashboard() {
                       <div style={{ overflowX: 'auto' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
                           <thead>
-                            <tr style={{ background: '#0a5c36', color: 'white' }}>
+                            <tr style={{ background: '#5b21b6', color: 'white' }}>
                               <th style={{ padding: '12px 16px', textAlign: isRtl ? 'right' : 'left', borderRadius: isRtl ? '0 8px 8px 0' : '8px 0 0 8px' }}>{isRtl ? 'المادة' : 'Subject'}</th>
                               <th style={{ padding: '12px 16px', textAlign: 'center' }}>{isRtl ? 'الدرجة' : 'Score'}</th>
                               <th style={{ padding: '12px 16px', textAlign: 'center' }}>{isRtl ? 'النسبة' : 'Percentage'}</th>
@@ -347,11 +347,11 @@ export default function ParentDashboard() {
                               return (
                                 <tr key={sub.nameAr} style={{ background: i % 2 === 0 ? '#f8fafc' : 'white' }}>
                                   <td style={{ padding: '12px 16px', fontWeight: 600, color: '#0f172a' }}>{lang === 'ar' ? sub.nameAr : sub.nameEn}</td>
-                                  <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, color: passed ? '#0a5c36' : '#dc2626' }}>{sub.score}/{sub.maxScore}</td>
+                                  <td style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, color: passed ? '#5b21b6' : '#dc2626' }}>{sub.score}/{sub.maxScore}</td>
                                   <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
                                       <div style={{ flex: 1, height: '6px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden', maxWidth: '80px' }}>
-                                        <div style={{ height: '100%', width: `${pct}%`, background: passed ? '#0a5c36' : '#dc2626', borderRadius: '999px' }} />
+                                        <div style={{ height: '100%', width: `${pct}%`, background: passed ? '#5b21b6' : '#dc2626', borderRadius: '999px' }} />
                                       </div>
                                       <span style={{ fontWeight: 600, color: '#374151', minWidth: '40px' }}>{pct}%</span>
                                     </div>
@@ -405,7 +405,7 @@ export default function ParentDashboard() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {announcements.map((a, i) => (
-                    <div key={a.id} className="card" style={{ padding: '24px', borderTop: `4px solid ${['#0a5c36','#2563eb','#c8972b','#7c3aed','#dc2626'][i % 5]}` }}>
+                    <div key={a.id} className="card" style={{ padding: '24px', borderTop: `4px solid ${['#5b21b6','#2563eb','#c8972b','#7c3aed','#dc2626'][i % 5]}` }}>
                       <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '8px', fontWeight: 600 }}>
                         {new Date(a.publishedAt).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                       </div>
@@ -439,7 +439,7 @@ export default function ParentDashboard() {
               {/* Summary cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
                 {[
-                  { label: isRtl ? 'إجمالي المصاريف' : 'Total Fees', value: `${feeSummary.total.toLocaleString()} EGP`, color: '#0a5c36', icon: '💳' },
+                  { label: isRtl ? 'إجمالي المصاريف' : 'Total Fees', value: `${feeSummary.total.toLocaleString()} EGP`, color: '#5b21b6', icon: '💳' },
                   { label: isRtl ? 'المدفوع' : 'Paid', value: `${feeSummary.paid.toLocaleString()} EGP`, color: '#16a34a', icon: '✅' },
                   { label: isRtl ? 'المتبقي' : 'Remaining', value: `${feeSummary.remaining.toLocaleString()} EGP`, color: feeSummary.remaining > 0 ? '#dc2626' : '#16a34a', icon: feeSummary.remaining > 0 ? '⚠️' : '✓' },
                 ].map(s => (
@@ -482,7 +482,7 @@ export default function ParentDashboard() {
                               onClick={() => payNow(fee.id)}
                               disabled={payingFeeId !== null}
                               style={{
-                                background: payingFeeId === fee.id ? '#94a3b8' : 'linear-gradient(135deg,#0a5c36,#0d7a45)',
+                                background: payingFeeId === fee.id ? '#94a3b8' : 'linear-gradient(135deg,#5b21b6,#6d28d9)',
                                 color: 'white', border: 'none', borderRadius: '8px', padding: '7px 16px',
                                 fontSize: '0.8rem', fontWeight: 700, cursor: payingFeeId !== null ? 'default' : 'pointer',
                                 fontFamily: 'inherit', display: 'inline-flex', alignItems: 'center', gap: '6px',
@@ -511,7 +511,7 @@ export default function ParentDashboard() {
               </h2>
               <div className="card" style={{ padding: '28px' }}>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap' }}>
-                  <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', flexShrink: 0 }}>👨‍👩‍👧</div>
+                  <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', flexShrink: 0 }}>👨‍👩‍👧</div>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: '1.2rem', color: '#0f172a', marginBottom: '4px' }}>{parent.name}</div>
                     <div style={{ color: '#64748b', fontSize: '0.88rem' }}>{isRtl ? 'ولي أمر' : 'Parent / Guardian'}</div>

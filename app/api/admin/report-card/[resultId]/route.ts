@@ -25,7 +25,7 @@ export async function GET(_req: NextRequest, { params }: { params: { resultId: s
     await new Promise<void>((resolve) => {
       doc.on('end', () => resolve())
 
-      const GREEN = '#0a5c36'
+      const GREEN = '#5b21b6'
       const GOLD = '#c8972b'
       const DARK = '#1e293b'
       const GRAY = '#64748b'

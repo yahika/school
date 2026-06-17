@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 import type { Lang } from '@/lib/translations'
@@ -433,7 +433,7 @@ function ResultCard({ result, lang, L }: { result: Result; lang: Lang; L: typeof
             {result.subjects.map(sub => {
               const subPct = Math.round((sub.score / sub.maxScore) * 100)
               const subPass = sub.status === 'pass'
-              const barColor = subPct >= 85 ? '#0a5c36' : subPct >= 70 ? '#16a34a' : subPct >= 50 ? '#d97706' : '#dc2626'
+              const barColor = subPct >= 85 ? '#5b21b6' : subPct >= 70 ? '#16a34a' : subPct >= 50 ? '#d97706' : '#dc2626'
               return (
                 <tr key={sub.id} className="subject-row">
                   <td style={{ fontWeight: 600, color: '#0f172a' }}>

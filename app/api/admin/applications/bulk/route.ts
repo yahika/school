@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         from: `"أكاديمية النخبة" <${process.env.GMAIL_USER}>`,
         to: app.parentEmail,
         subject: `🎉 تهانينا! تم قبول طلب تسجيل ${app.studentNameAr}`,
-        html: `<div dir="rtl" style="font-family:Arial;max-width:500px;padding:24px"><h2 style="color:#0a5c36">تهانينا ${app.parentName}! تم قبول طلب تسجيل ${app.studentNameAr} في الصف ${app.gradeApplying}.</h2><p>سيتواصل معكم فريق القبول قريباً.</p></div>`,
+        html: `<div dir="rtl" style="font-family:Arial;max-width:500px;padding:24px"><h2 style="color:#5b21b6">تهانينا ${app.parentName}! تم قبول طلب تسجيل ${app.studentNameAr} في الصف ${app.gradeApplying}.</h2><p>سيتواصل معكم فريق القبول قريباً.</p></div>`,
       }) : Promise.resolve()))
     }
 

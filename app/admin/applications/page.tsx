@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface Application {
@@ -140,7 +140,7 @@ export default function ApplicationsAdmin() {
       {toast && (
         <div style={{
           position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)',
-          background: toast.ok ? '#0a5c36' : '#dc2626', color: 'white',
+          background: toast.ok ? '#5b21b6' : '#dc2626', color: 'white',
           padding: '12px 28px', borderRadius: '999px', fontWeight: 600,
           fontSize: '0.95rem', zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.25)',
         }}>
@@ -169,7 +169,7 @@ export default function ApplicationsAdmin() {
             {/* Modal Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
               <div>
-                <h2 style={{ color: '#0a5c36', fontWeight: 800, margin: '0 0 4px', fontSize: '1.4rem' }}>
+                <h2 style={{ color: '#5b21b6', fontWeight: 800, margin: '0 0 4px', fontSize: '1.4rem' }}>
                   {selected.studentNameAr}
                 </h2>
                 {selected.studentNameEn && (
@@ -232,7 +232,7 @@ export default function ApplicationsAdmin() {
                   disabled={loadingId === selected.id}
                   style={{
                     flex: 1, padding: '12px', borderRadius: '10px',
-                    background: '#0a5c36', color: 'white', border: 'none',
+                    background: '#5b21b6', color: 'white', border: 'none',
                     fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '1rem',
                     opacity: loadingId === selected.id ? 0.6 : 1,
                   }}
@@ -272,7 +272,7 @@ export default function ApplicationsAdmin() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📝 طلبات التسجيل</h1>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📝 طلبات التسجيل</h1>
         <button
           onClick={load}
           style={{ marginRight: 'auto', padding: '6px 14px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', fontSize: '0.8rem', color: '#64748b', fontFamily: 'inherit' }}
@@ -285,7 +285,7 @@ export default function ApplicationsAdmin() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
           { key: 'pending', label: 'قيد المراجعة', color: '#d97706', hint: 'الطلبات الجديدة' },
-          { key: 'all', label: 'الكل', color: '#0a5c36', hint: 'جميع الطلبات' },
+          { key: 'all', label: 'الكل', color: '#5b21b6', hint: 'جميع الطلبات' },
           { key: 'accepted', label: 'مقبول', color: '#16a34a', hint: 'الطلبات المقبولة' },
           { key: 'rejected', label: 'مرفوض', color: '#dc2626', hint: 'الطلبات المرفوضة' },
         ].map(s => (
@@ -305,7 +305,7 @@ export default function ApplicationsAdmin() {
 
       {/* Bulk action toolbar */}
       {checked.length > 0 && (
-        <div style={{ background: '#0a5c36', borderRadius: '12px', padding: '12px 20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ background: '#5b21b6', borderRadius: '12px', padding: '12px 20px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <span style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>✓ تم تحديد {checked.length} طلب</span>
           <div style={{ display: 'flex', gap: '8px', marginRight: 'auto', flexWrap: 'wrap' }}>
             <button onClick={() => bulkAction('accept')} disabled={bulkLoading} style={{ padding: '7px 18px', borderRadius: '8px', background: '#f0fdf4', color: '#15803d', border: 'none', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.85rem' }}>
@@ -327,7 +327,7 @@ export default function ApplicationsAdmin() {
       {/* Select all row */}
       {filtered.length > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 4px', marginBottom: '4px' }}>
-          <input type="checkbox" checked={checked.length === filtered.length && filtered.length > 0} onChange={toggleAll} style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: '#0a5c36' }} />
+          <input type="checkbox" checked={checked.length === filtered.length && filtered.length > 0} onChange={toggleAll} style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: '#5b21b6' }} />
           <span style={{ color: '#64748b', fontSize: '0.82rem', fontWeight: 600 }}>
             {checked.length === filtered.length && filtered.length > 0 ? 'إلغاء تحديد الكل' : `تحديد الكل (${filtered.length})`}
           </span>
@@ -342,7 +342,7 @@ export default function ApplicationsAdmin() {
             style={{
               background: checked.includes(app.id) ? '#f0fdf4' : 'white',
               borderRadius: '12px', padding: '20px',
-              border: checked.includes(app.id) ? '1.5px solid #0a5c36' : '1px solid #e2e8f0',
+              border: checked.includes(app.id) ? '1.5px solid #5b21b6' : '1px solid #e2e8f0',
               cursor: 'pointer',
               opacity: loadingId === app.id ? 0.6 : 1,
               transition: 'all 0.15s',
@@ -355,7 +355,7 @@ export default function ApplicationsAdmin() {
             {/* Checkbox */}
             <div onClick={e => { e.stopPropagation(); toggleCheck(app.id) }} style={{ paddingTop: '2px', flexShrink: 0 }}>
               <input type="checkbox" checked={checked.includes(app.id)} onChange={() => toggleCheck(app.id)}
-                style={{ width: '17px', height: '17px', cursor: 'pointer', accentColor: '#0a5c36' }} />
+                style={{ width: '17px', height: '17px', cursor: 'pointer', accentColor: '#5b21b6' }} />
             </div>
 
             {/* Content */}

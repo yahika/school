@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -87,7 +87,7 @@ export default function PaymentResultPage() {
         <p style={{ color: '#64748b', fontSize: '0.92rem', lineHeight: 1.7, marginBottom: '28px' }}>{c.body}</p>
         <button
           onClick={() => router.push('/parent/dashboard')}
-          style={{ background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontWeight: 700, fontSize: '0.92rem', cursor: 'pointer', fontFamily: 'inherit' }}
+          style={{ background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', padding: '12px 28px', fontWeight: 700, fontSize: '0.92rem', cursor: 'pointer', fontFamily: 'inherit' }}
         >
           {isRtl ? 'الذهاب إلى لوحة التحكم' : 'Go to dashboard'}
         </button>

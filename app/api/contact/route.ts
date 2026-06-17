@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
           to: process.env.GMAIL_USER,
           subject: `📬 رسالة جديدة من ${name}`,
           html: `<div dir="rtl" style="font-family:Arial,sans-serif;max-width:500px;padding:24px;background:#f8fafc;border-radius:12px">
-            <h2 style="color:#0a5c36;margin:0 0 16px">📬 رسالة جديدة من الموقع</h2>
+            <h2 style="color:#5b21b6;margin:0 0 16px">📬 رسالة جديدة من الموقع</h2>
             <p><strong>الاسم:</strong> ${name}</p>
             <p><strong>الهاتف:</strong> ${phone}</p>
             ${email ? `<p><strong>البريد:</strong> ${email}</p>` : ''}

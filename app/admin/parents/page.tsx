@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface Parent { id: number; name: string; email: string; phone: string; studentName: string; seatNumber: string; gradeAr: string; isActive: boolean; createdAt: string }
@@ -39,12 +39,12 @@ export default function ParentsAdmin() {
 
   return (
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'Tajawal,sans-serif' }} dir="rtl">
-      {toast && <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: toast.ok ? '#0a5c36' : '#dc2626', color: 'white', padding: '12px 28px', borderRadius: '999px', fontWeight: 600, zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>{toast.msg}</div>}
+      {toast && <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', background: toast.ok ? '#5b21b6' : '#dc2626', color: 'white', padding: '12px 28px', borderRadius: '999px', fontWeight: 600, zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)' }}>{toast.msg}</div>}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>👨‍👩‍👧 أولياء الأمور</h1>
-        <span style={{ background: '#f0fdf4', color: '#0a5c36', fontWeight: 700, fontSize: '0.85rem', padding: '4px 14px', borderRadius: '999px', border: '1px solid #bbf7d0' }}>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>👨‍👩‍👧 أولياء الأمور</h1>
+        <span style={{ background: '#f0fdf4', color: '#5b21b6', fontWeight: 700, fontSize: '0.85rem', padding: '4px 14px', borderRadius: '999px', border: '1px solid #bbf7d0' }}>
           {parents.length} حساب
         </span>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث بالاسم أو البريد أو رقم الجلوس"
@@ -70,7 +70,7 @@ export default function ParentsAdmin() {
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
           { key: 'pending', label: `انتظار الموافقة (${pending.length})`, color: '#d97706' },
-          { key: 'active', label: `نشط (${parents.filter(p=>p.isActive).length})`, color: '#0a5c36' },
+          { key: 'active', label: `نشط (${parents.filter(p=>p.isActive).length})`, color: '#5b21b6' },
           { key: 'all', label: `الكل (${parents.length})`, color: '#64748b' },
         ].map(f => (
           <button key={f.key} onClick={() => setFilter(f.key as typeof filter)} style={{ padding: '7px 16px', borderRadius: '999px', border: '2px solid', borderColor: filter === f.key ? f.color : '#e2e8f0', background: filter === f.key ? f.color : 'white', color: filter === f.key ? 'white' : '#64748b', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.82rem', transition: 'all 0.15s' }}>
@@ -82,7 +82,7 @@ export default function ParentsAdmin() {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { label: 'إجمالي الحسابات', value: parents.length, color: '#0a5c36', icon: '👨‍👩‍👧' },
+          { label: 'إجمالي الحسابات', value: parents.length, color: '#5b21b6', icon: '👨‍👩‍👧' },
           { label: 'حسابات نشطة', value: parents.filter(p => p.isActive).length, color: '#16a34a', icon: '✅' },
           { label: 'حسابات معطلة', value: parents.filter(p => !p.isActive).length, color: '#dc2626', icon: '🔒' },
         ].map(s => (
@@ -98,12 +98,12 @@ export default function ParentsAdmin() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {filtered.map(p => (
           <div key={p.id} style={{ background: 'white', borderRadius: '14px', padding: '18px 22px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', opacity: p.isActive ? 1 : 0.6 }}>
-            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: p.isActive ? 'linear-gradient(135deg,#0a5c36,#0d7a45)' : '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>👤</div>
+            <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: p.isActive ? 'linear-gradient(135deg,#5b21b6,#6d28d9)' : '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>👤</div>
             <div style={{ flex: 1, minWidth: '200px' }}>
               <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>{p.name}</div>
               <div style={{ color: '#64748b', fontSize: '0.82rem', marginTop: '2px' }}>{p.email} {p.phone && `· ${p.phone}`}</div>
               <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: '2px' }}>
-                طالب: <strong style={{ color: '#0a5c36' }}>{p.studentName}</strong> · رقم جلوس: <strong>{p.seatNumber}</strong> · {p.gradeAr}
+                طالب: <strong style={{ color: '#5b21b6' }}>{p.studentName}</strong> · رقم جلوس: <strong>{p.seatNumber}</strong> · {p.gradeAr}
               </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
@@ -113,7 +113,7 @@ export default function ParentsAdmin() {
               <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
                 {new Date(p.createdAt).toLocaleDateString('ar-EG')}
               </div>
-              <button onClick={() => toggleActive(p.id, p.isActive)} style={{ padding: '6px 14px', borderRadius: '8px', border: `1px solid ${p.isActive ? '#dc2626' : '#0a5c36'}`, color: p.isActive ? '#dc2626' : '#0a5c36', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit', fontWeight: 600 }}>
+              <button onClick={() => toggleActive(p.id, p.isActive)} style={{ padding: '6px 14px', borderRadius: '8px', border: `1px solid ${p.isActive ? '#dc2626' : '#5b21b6'}`, color: p.isActive ? '#dc2626' : '#5b21b6', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit', fontWeight: 600 }}>
                 {p.isActive ? '🔒 تعطيل' : '✅ تفعيل'}
               </button>
               <button onClick={() => del(p.id)} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', color: '#94a3b8', background: 'white', cursor: 'pointer', fontSize: '0.78rem', fontFamily: 'inherit' }}>🗑</button>

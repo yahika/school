@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface ExamItem {
@@ -47,7 +47,7 @@ export default function SchedulePage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif' }} dir={isRtl ? 'rtl' : 'ltr'}>
-      <nav style={{ background: '#0a5c36', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{ background: '#5b21b6', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <a href="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 700 }}>AEA</a>
         <div style={{ display: 'flex', gap: '12px' }}>
           <a href="/" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.85rem' }}>{L.home}</a>
@@ -59,7 +59,7 @@ export default function SchedulePage() {
       {selected && (
         <div onClick={() => setSelected(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backdropFilter: 'blur(4px)' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '24px', maxWidth: '480px', width: '100%', boxShadow: '0 32px 80px rgba(0,0,0,0.35)', overflow: 'hidden' }}>
-            <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '28px', color: 'white' }}>
+            <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '28px', color: 'white' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '4px' }}>{lang === 'ar' ? selected.subjectAr : selected.subjectEn}</div>
@@ -85,7 +85,7 @@ export default function SchedulePage() {
               ))}
             </div>
             <div style={{ padding: '16px 28px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setSelected(null)} style={{ padding: '10px 28px', background: '#0a5c36', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button onClick={() => setSelected(null)} style={{ padding: '10px 28px', background: '#5b21b6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                 {lang === 'ar' ? 'إغلاق' : 'Close'}
               </button>
             </div>
@@ -93,7 +93,7 @@ export default function SchedulePage() {
         </div>
       )}
 
-      <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '48px 24px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '48px 24px', textAlign: 'center' }}>
         <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: 800, margin: '0 0 8px' }}>📅 {L.title}</h1>
         <p style={{ color: 'rgba(255,255,255,0.55)', margin: 0, fontSize: '0.9rem' }}>
           {isRtl ? 'انقر على أي امتحان لرؤية التفاصيل' : 'Click any exam to see full details'}
@@ -119,7 +119,7 @@ export default function SchedulePage() {
         ) : (
           Object.entries(grouped).sort(([a],[b]) => a.localeCompare(b)).map(([date, items]) => (
             <div key={date} style={{ marginBottom: '24px' }}>
-              <div style={{ background: '#0a5c36', color: 'white', padding: '10px 20px', borderRadius: '10px 10px 0 0', fontWeight: 700 }}>
+              <div style={{ background: '#5b21b6', color: 'white', padding: '10px 20px', borderRadius: '10px 10px 0 0', fontWeight: 700 }}>
                 📆 {new Date(date).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
               <div style={{ background: 'white', border: '1px solid #e2e8f0', borderTop: 'none', borderRadius: '0 0 10px 10px', overflow: 'hidden' }}>

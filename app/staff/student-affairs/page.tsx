@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import StaffShell from '../_components/StaffShell'
 import * as XLSX from 'xlsx'
@@ -50,7 +50,7 @@ function Empty({ icon, text }: { icon: string; text: string }) {
 function StatCard({ icon, label, value, sub, color }: { icon: string; label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="card" style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#0a5c36') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#5b21b6') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: color ?? '#0f172a', lineHeight: 1.1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>{label}{sub ? <span style={{ color: '#94a3b8' }}> · {sub}</span> : null}</div>
@@ -86,7 +86,7 @@ function OverviewTab() {
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '16px', marginBottom: '22px' }}>
         <StatCard icon="🎓" label="إجمالي الطلاب (من النتائج)" value={data.totalStudents} />
-        <StatCard icon="📁" label="ملفات شؤون الطلبة" value={data.totalFiles} sub={`${data.activeFiles} نشط`} color="#0a5c36" />
+        <StatCard icon="📁" label="ملفات شؤون الطلبة" value={data.totalFiles} sub={`${data.activeFiles} نشط`} color="#5b21b6" />
         <StatCard icon="🗓️" label={`حضور اليوم`} value={data.attendanceTaken} sub={`من ${data.totalStudents} · ${data.today}`} color="#2563eb" />
         <StatCard icon="📋" label="ملاحظات سلوك حديثة" value={data.recentConduct.length} color="#7c3aed" />
       </div>
@@ -122,7 +122,7 @@ function OverviewTab() {
               {data.gradeBreakdown.map(g => (
                 <div key={g.gradeAr} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
                   <span style={{ fontWeight: 600, color: '#374151', fontSize: '0.88rem' }}>{g.gradeAr}</span>
-                  <span style={{ fontWeight: 800, color: '#0a5c36', fontSize: '0.9rem' }}>{g.count} طالب</span>
+                  <span style={{ fontWeight: 800, color: '#5b21b6', fontSize: '0.9rem' }}>{g.count} طالب</span>
                 </div>
               ))}
             </div>
@@ -204,6 +204,34 @@ function fileToForm(f: StudentFileRow): FileForm {
   }
 }
 
+function printStudentList(files: StudentFileRow[], filter?: string) {
+  const rows = files.map((f, i) =>
+    `<tr><td>${i + 1}</td><td>${f.seatNumber}</td><td>${f.nameAr}</td><td>${f.gradeAr}</td><td>${f.guardianName ?? '—'}</td><td>${f.guardianPhone ?? '—'}</td></tr>`
+  ).join('')
+  const title = filter ? `كشف الطلاب — بحث: ${filter}` : 'كشف الطلاب'
+  const html = `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>${title}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  body { font-family: 'Tajawal', Arial, sans-serif; padding: 24px; color: #0f172a; font-size: 13px; }
+  h2 { color: #5b21b6; margin-bottom: 4px; }
+  .meta { color: #64748b; font-size: 12px; margin-bottom: 18px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #5b21b6; color: white; padding: 9px 12px; text-align: right; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  .footer { margin-top: 18px; color: #94a3b8; font-size: 11px; text-align: center; }
+</style></head><body>
+<h2>📋 ${title}</h2>
+<div class="meta">إجمالي: <strong>${files.length}</strong> طالب · تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</div>
+<table><thead><tr><th>#</th><th>رقم الجلوس</th><th>اسم الطالب</th><th>الصف</th><th>ولي الأمر</th><th>هاتف</th></tr></thead>
+<tbody>${rows}</tbody></table>
+<div class="footer">المدرسة الأمريكية — شؤون الطلاب</div>
+<script>window.onload=function(){window.print()}</script>
+</body></html>`
+  const w = window.open('', '_blank', 'width=900,height=700')
+  if (w) { w.document.write(html); w.document.close() }
+}
+
 function FilesTab({ notify }: { notify: Notify }) {
   const [files, setFiles] = useState<StudentFileRow[]>([])
   const [search, setSearch] = useState('')
@@ -267,6 +295,7 @@ function FilesTab({ notify }: { notify: Notify }) {
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث بالاسم أو رقم الجلوس أو الصف"
             style={{ flex: 1, minWidth: '220px', padding: '10px 16px', borderRadius: '10px', border: '1px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.88rem' }} />
           <span style={{ color: '#64748b', fontSize: '0.85rem' }}>{files.length} ملف</span>
+          {files.length > 0 && <button onClick={() => printStudentList(files, search)} className="btn-outline" style={{ whiteSpace: 'nowrap' }}>🖨️ طباعة الكشف</button>}
           <button onClick={openCreate} className="btn-primary">+ ملف طالب جديد</button>
         </div>
 
@@ -277,8 +306,8 @@ function FilesTab({ notify }: { notify: Notify }) {
             {files.map(f => {
               const m = FILE_STATUS_META[f.status] ?? FILE_STATUS_META.active
               return (
-                <div key={f.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === f.id ? '2px solid #0a5c36' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.76rem', flexShrink: 0 }}>{f.seatNumber}</div>
+                <div key={f.id} style={{ background: 'white', borderRadius: '12px', padding: '14px 18px', border: editing?.id === f.id ? '2px solid #5b21b6' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '0.76rem', flexShrink: 0 }}>{f.seatNumber}</div>
                   <div style={{ flex: 1, minWidth: '160px' }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>{f.nameAr}</div>
                     <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>{f.gradeAr}{f.guardianName ? ` · ولي الأمر: ${f.guardianName}` : ''}{f.guardianPhone ? ` · ${f.guardianPhone}` : ''}</div>
@@ -672,7 +701,7 @@ function ImportTab({ notify }: { notify: Notify }) {
         <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
           onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
           onClick={() => fileRef.current?.click()}
-          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          style={{ border: `2px dashed ${dragOver ? '#5b21b6' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
           <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
           <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>

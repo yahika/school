@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface Announcement { id: number; titleAr: string; titleEn: string; bodyAr: string; bodyEn: string; isPublished: boolean; createdAt: string }
@@ -76,7 +76,7 @@ export default function AnnouncementsAdmin() {
       {toast && (
         <div style={{
           position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)',
-          background: toast.ok ? '#0a5c36' : '#dc2626', color: 'white',
+          background: toast.ok ? '#5b21b6' : '#dc2626', color: 'white',
           padding: '12px 28px', borderRadius: '999px', fontWeight: 600,
           zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
         }}>{toast.msg}</div>
@@ -84,17 +84,17 @@ export default function AnnouncementsAdmin() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '28px' }}>
         <a href="/admin/dashboard" style={{ color: '#64748b', textDecoration: 'none', fontSize: '0.85rem' }}>← لوحة التحكم</a>
-        <h1 style={{ color: '#0a5c36', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📢 الإعلانات</h1>
+        <h1 style={{ color: '#5b21b6', fontWeight: 800, margin: 0, fontSize: '1.5rem' }}>📢 الإعلانات</h1>
       </div>
 
       {/* Form */}
       <div style={{
         background: 'white', borderRadius: '16px', padding: '28px', marginBottom: '28px',
-        border: isEditing ? '2px solid #0a5c36' : '1px solid #e2e8f0',
+        border: isEditing ? '2px solid #5b21b6' : '1px solid #e2e8f0',
         boxShadow: isEditing ? '0 0 0 4px rgba(10,92,54,0.08)' : 'none',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ color: '#0a5c36', fontWeight: 700, margin: 0, fontSize: '1rem' }}>
+          <h2 style={{ color: '#5b21b6', fontWeight: 700, margin: 0, fontSize: '1rem' }}>
             {isEditing ? '✏️ تعديل الإعلان' : '➕ إعلان جديد'}
           </h2>
           {isEditing && (
@@ -123,7 +123,7 @@ export default function AnnouncementsAdmin() {
             ))}
           </div>
           <button type="submit" disabled={saving} style={{
-            background: isEditing ? 'linear-gradient(135deg,#0a5c36,#0d7a45)' : 'linear-gradient(135deg,#0a5c36,#0d7a45)',
+            background: isEditing ? 'linear-gradient(135deg,#5b21b6,#6d28d9)' : 'linear-gradient(135deg,#5b21b6,#6d28d9)',
             color: 'white', padding: '11px 32px', borderRadius: '10px', border: 'none',
             fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
             fontSize: '0.95rem', opacity: saving ? 0.7 : 1,
@@ -138,7 +138,7 @@ export default function AnnouncementsAdmin() {
         {items.map(item => (
           <div key={item.id} style={{
             background: 'white', borderRadius: '14px', padding: '20px 24px',
-            border: editId === item.id ? '2px solid #0a5c36' : '1px solid #e2e8f0',
+            border: editId === item.id ? '2px solid #5b21b6' : '1px solid #e2e8f0',
             transition: 'all 0.15s',
           }}>
             <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
@@ -154,7 +154,7 @@ export default function AnnouncementsAdmin() {
                 <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '8px' }}>{new Date(item.createdAt).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexShrink: 0 }}>
-                <button onClick={() => startEdit(item)} style={{ padding: '6px 16px', borderRadius: '8px', border: '1px solid #0a5c36', color: '#0a5c36', background: 'white', cursor: 'pointer', fontSize: '0.8rem', fontFamily: 'inherit', fontWeight: 600 }}>
+                <button onClick={() => startEdit(item)} style={{ padding: '6px 16px', borderRadius: '8px', border: '1px solid #5b21b6', color: '#5b21b6', background: 'white', cursor: 'pointer', fontSize: '0.8rem', fontFamily: 'inherit', fontWeight: 600 }}>
                   ✏️ تعديل
                 </button>
                 <button onClick={() => toggle(item.id, item.isPublished)} style={{ padding: '6px 16px', borderRadius: '8px', border: '1px solid #64748b', color: '#64748b', background: 'white', cursor: 'pointer', fontSize: '0.8rem', fontFamily: 'inherit' }}>

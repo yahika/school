@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 
 const grades = [
@@ -68,7 +68,7 @@ export default function ApplyPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: isRtl ? 'Tajawal,sans-serif' : 'Poppins,sans-serif' }} dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Nav */}
-      <nav style={{ background: '#0a5c36', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{ background: '#5b21b6', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <a href="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 700, fontSize: '0.95rem' }}>AEA</a>
         <div style={{ display: 'flex', gap: '12px' }}>
           <a href="/" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '0.85rem' }}>{L.home}</a>
@@ -77,7 +77,7 @@ export default function ApplyPage() {
       </nav>
 
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '48px 24px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '48px 24px', textAlign: 'center' }}>
         <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: 800, margin: '0 0 8px' }}>📝 {L.title}</h1>
         <p style={{ color: 'rgba(255,255,255,0.75)', margin: 0 }}>{L.subtitle}</p>
       </div>
@@ -88,13 +88,13 @@ export default function ApplyPage() {
           <div style={{ background: '#f0fdf4', border: '1px solid #86efac', borderRadius: '16px', padding: '40px', textAlign: 'center', fontSize: '1.1rem', color: '#15803d', fontWeight: 600 }}>
             {L.success}
             <br /><br />
-            <a href="/" style={{ color: '#0a5c36', fontWeight: 700 }}>← {L.home}</a>
+            <a href="/" style={{ color: '#5b21b6', fontWeight: 700 }}>← {L.home}</a>
           </div>
         ) : (
           <form onSubmit={submit}>
             {/* Student */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '28px', marginBottom: '20px', border: '1px solid #e2e8f0' }}>
-              <h2 style={{ color: '#0a5c36', fontWeight: 700, marginBottom: '20px', fontSize: '1.1rem' }}>👨‍🎓 {L.studentInfo}</h2>
+              <h2 style={{ color: '#5b21b6', fontWeight: 700, marginBottom: '20px', fontSize: '1.1rem' }}>👨‍🎓 {L.studentInfo}</h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {[
                   { label: L.nameAr, key: 'studentNameAr', type: 'text', required: true },
@@ -120,7 +120,7 @@ export default function ApplyPage() {
 
             {/* Parent */}
             <div style={{ background: 'white', borderRadius: '16px', padding: '28px', marginBottom: '20px', border: '1px solid #e2e8f0' }}>
-              <h2 style={{ color: '#0a5c36', fontWeight: 700, marginBottom: '20px', fontSize: '1.1rem' }}>👨‍👩‍👧 {L.parentInfo}</h2>
+              <h2 style={{ color: '#5b21b6', fontWeight: 700, marginBottom: '20px', fontSize: '1.1rem' }}>👨‍👩‍👧 {L.parentInfo}</h2>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {[
                   { label: L.parentName, key: 'parentName', required: true },
@@ -145,7 +145,7 @@ export default function ApplyPage() {
             {error && <div style={{ color: '#dc2626', background: '#fef2f2', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px' }}>{error}</div>}
 
             <button type="submit" disabled={loading} style={{
-              width: '100%', padding: '16px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)',
+              width: '100%', padding: '16px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)',
               color: 'white', border: 'none', borderRadius: '12px', fontSize: '1.1rem',
               fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
               opacity: loading ? 0.7 : 1,

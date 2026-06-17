@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -35,7 +35,7 @@ export default function StaffShell({ title, icon, tabs, active, onTabChange, chi
   return (
     <div style={{ minHeight: '100vh', background: 'var(--c-bg, #f1f5f9)', fontFamily: 'Tajawal, sans-serif' }} dir="rtl">
       <header style={{
-        background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', padding: '16px 28px',
+        background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', padding: '16px 28px',
         display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap',
         boxShadow: '0 4px 16px rgba(10,92,54,0.25)', position: 'sticky', top: 0, zIndex: 20,
       }}>
@@ -69,8 +69,8 @@ export default function StaffShell({ title, icon, tabs, active, onTabChange, chi
             <button key={tb.key} onClick={() => onTabChange?.(tb.key)} style={{
               padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer',
               fontFamily: 'inherit', fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap',
-              color: active === tb.key ? '#0a5c36' : '#64748b',
-              borderBottom: active === tb.key ? '3px solid #0a5c36' : '3px solid transparent',
+              color: active === tb.key ? '#5b21b6' : '#64748b',
+              borderBottom: active === tb.key ? '3px solid #5b21b6' : '3px solid transparent',
               transition: 'color 0.15s',
             }}>
               {tb.label}

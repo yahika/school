@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import * as XLSX from 'xlsx'
 import StaffShell from '../_components/StaffShell'
@@ -39,7 +39,7 @@ function Empty({ icon, text }: { icon: string; text: string }) {
 function StatCard({ icon, label, value, sub, color }: { icon: string; label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div className="card" style={{ padding: '18px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#0a5c36') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
+      <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: (color ?? '#5b21b6') + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>{icon}</div>
       <div>
         <div style={{ fontSize: '1.25rem', fontWeight: 900, color: color ?? '#0f172a', lineHeight: 1.1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '2px' }}>{label}{sub ? <span style={{ color: '#94a3b8' }}> · {sub}</span> : null}</div>
@@ -79,7 +79,7 @@ function OverviewTab({ onOpenSemester }: { onOpenSemester: (id: number) => void 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '22px' }}>
         <StatCard icon="✅" label="فصول معتمدة" value={data.reviewApproved} color="#15803d" />
         <StatCard icon="🧑‍🎓" label="إجمالي نتائج الطلاب" value={data.totalResults.toLocaleString()} color="#7c3aed" />
-        <StatCard icon="📈" label="معدل النجاح العام" value={`${data.overallPassRate}%`} sub={`${data.overallPassCount.toLocaleString()} ناجح · ${data.overallFailCount.toLocaleString()} راسب`} color="#0a5c36" />
+        <StatCard icon="📈" label="معدل النجاح العام" value={`${data.overallPassRate}%`} sub={`${data.overallPassCount.toLocaleString()} ناجح · ${data.overallFailCount.toLocaleString()} راسب`} color="#5b21b6" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
@@ -217,7 +217,7 @@ function SemestersTab({ notify, openSemesterId, onConsumeOpen, onViewResults }: 
               const m = REVIEW_STATUS_META[status as keyof typeof REVIEW_STATUS_META] ?? REVIEW_STATUS_META.pending
               return (
                 <div key={s.id} onClick={() => setActiveId(s.id)}
-                  style={{ cursor: 'pointer', background: 'white', borderRadius: '12px', padding: '14px 18px', border: activeId === s.id ? '2px solid #0a5c36' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  style={{ cursor: 'pointer', background: 'white', borderRadius: '12px', padding: '14px 18px', border: activeId === s.id ? '2px solid #5b21b6' : '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.92rem' }}>{s.nameAr} <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.78rem' }}>({s.nameEn})</span></div>
                     <div style={{ color: '#64748b', fontSize: '0.78rem', marginTop: '2px' }}>{s.academicYear} · {s.term} · 👥 {s.totalStudents} طالب · 📈 نجاح {s.passRate}%</div>
@@ -365,7 +365,7 @@ function ResultsTab({ presetSemesterId, onConsumePreset }: { presetSemesterId: n
             const m = RESULT_STATUS_META[r.status as keyof typeof RESULT_STATUS_META] ?? RESULT_STATUS_META.fail
             const expanded = expandedId === r.id
             return (
-              <div key={r.id} style={{ background: 'white', borderRadius: '12px', border: expanded ? '2px solid #0a5c36' : '1px solid #e2e8f0', overflow: 'hidden' }}>
+              <div key={r.id} style={{ background: 'white', borderRadius: '12px', border: expanded ? '2px solid #5b21b6' : '1px solid #e2e8f0', overflow: 'hidden' }}>
                 <div onClick={() => toggleExpand(r)} style={{ cursor: 'pointer', padding: '13px 18px', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                   <div style={{ flex: 1, minWidth: '200px' }}>
                     <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.9rem' }}>{r.nameAr} <span style={{ color: '#94a3b8', fontWeight: 500, fontSize: '0.76rem' }}>· #{r.seatNumber}</span></div>
@@ -577,7 +577,7 @@ function GradeImportTab({ notify }: { notify: Notify }) {
         <div onDragOver={e => { e.preventDefault(); setDragOver(true) }} onDragLeave={() => setDragOver(false)}
           onDrop={e => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files[0]; if (f) parseFile(f) }}
           onClick={() => fileRef.current?.click()}
-          style={{ border: `2px dashed ${dragOver ? '#0a5c36' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
+          style={{ border: `2px dashed ${dragOver ? '#5b21b6' : '#e2e8f0'}`, borderRadius: '12px', padding: '32px', textAlign: 'center', cursor: 'pointer', background: dragOver ? '#f0fdf4' : '#fafafa', transition: 'all 0.15s' }}>
           <input ref={fileRef} type="file" accept=".xlsx,.xls,.csv" hidden onChange={e => { const f = e.target.files?.[0]; if (f) parseFile(f) }} />
           <div style={{ fontSize: '2.2rem', marginBottom: '10px' }}>📊</div>
           <div style={{ fontWeight: 700, color: '#0f172a' }}>{fileName || 'اسحب ملف Excel هنا أو اضغط للاختيار'}</div>
@@ -604,7 +604,7 @@ function GradeImportTab({ notify }: { notify: Notify }) {
                   <td style={{ padding: '7px 12px', fontWeight: 600 }}>{r.nameAr}</td>
                   <td style={{ padding: '7px 12px' }}>{r.gradeAr}</td>
                   <td style={{ padding: '7px 12px', fontWeight: 700 }}>{r.totalScore}/{r.maxScore}</td>
-                  <td style={{ padding: '7px 12px', color: '#0a5c36' }}>{r.percentage ?? '—'}%</td>
+                  <td style={{ padding: '7px 12px', color: '#5b21b6' }}>{r.percentage ?? '—'}%</td>
                   <td style={{ padding: '7px 12px', color: r.status === 'pass' ? '#15803d' : '#dc2626' }}>{r.status === 'pass' ? 'ناجح' : 'راسب'}</td>
                 </tr>
               ))}</tbody>

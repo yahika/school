@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import type { Lang } from '@/lib/translations'
@@ -157,7 +157,7 @@ function ContactForm({ lang, isRtl }: { lang: 'ar'|'en'; isRtl: boolean }) {
 
   return (
     <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '32px', border: '1px solid #e2e8f0' }}>
-      <h3 style={{ color: '#0a5c36', fontWeight: 800, marginBottom: '24px', fontSize: '1.1rem' }}>{L.title}</h3>
+      <h3 style={{ color: '#5b21b6', fontWeight: 800, marginBottom: '24px', fontSize: '1.1rem' }}>{L.title}</h3>
       <form onSubmit={submit}>
         {[
           { label: L.name, key: 'name', type: 'text', required: true },
@@ -168,17 +168,17 @@ function ContactForm({ lang, isRtl }: { lang: 'ar'|'en'; isRtl: boolean }) {
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{f.label}</label>
             <input type={f.type} required={f.required} value={(form as Record<string,string>)[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
               style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none', background: 'white', transition: 'border 0.2s' }}
-              onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+              onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
           </div>
         ))}
         <div style={{ marginBottom: '18px' }}>
           <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px', fontSize: '0.85rem', color: '#374151' }}>{L.message}</label>
           <textarea required rows={4} value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))}
             style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontFamily: 'inherit', fontSize: '0.9rem', boxSizing: 'border-box', resize: 'vertical', outline: 'none', background: 'white', transition: 'border 0.2s' }}
-            onFocus={e => e.target.style.borderColor = '#0a5c36'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
+            onFocus={e => e.target.style.borderColor = '#5b21b6'} onBlur={e => e.target.style.borderColor = '#e2e8f0'} />
         </div>
         {err && <div style={{ color: '#dc2626', fontSize: '0.85rem', marginBottom: '12px' }}>{err}</div>}
-        <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#0a5c36,#0d7a45)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
+        <button type="submit" disabled={loading} style={{ width: '100%', padding: '13px', background: 'linear-gradient(135deg,#5b21b6,#6d28d9)', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '1rem', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: loading ? 0.7 : 1 }}>
           {loading ? '...' : `📤 ${L.btn}`}
         </button>
       </form>
@@ -209,7 +209,7 @@ function StatCard({ value, label, icon, trigger }: { value: string; label: strin
   return (
     <div style={{ textAlign: 'center', padding: '32px 16px' }}>
       <div style={{ fontSize: '2.2rem', marginBottom: '8px' }}>{icon}</div>
-      <div style={{ fontSize: '2.8rem', fontWeight: 900, color: '#0a5c36', lineHeight: 1 }}>{display}</div>
+      <div style={{ fontSize: '2.8rem', fontWeight: 900, color: '#5b21b6', lineHeight: 1 }}>{display}</div>
       <div style={{ color: '#64748b', fontWeight: 600, marginTop: '8px', fontSize: '0.95rem' }}>{label}</div>
     </div>
   )
@@ -347,7 +347,7 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section style={{
-        background: 'linear-gradient(160deg, #041f12 0%, #063d22 40%, #0a5c36 70%, #0d6b40 100%)',
+        background: 'linear-gradient(160deg, #041f12 0%, #3b0764 40%, #5b21b6 70%, #0d6b40 100%)',
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         textAlign: 'center', padding: '100px 24px 80px', position: 'relative', overflow: 'hidden',
       }}>
@@ -448,7 +448,7 @@ export default function HomePage() {
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
             <div style={{ display: 'inline-block', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '999px', padding: '6px 20px', marginBottom: '16px' }}>
-              <span style={{ color: '#0a5c36', fontSize: '0.82rem', fontWeight: 700 }}>✦ {isRtl ? 'من نحن' : 'WHO WE ARE'}</span>
+              <span style={{ color: '#5b21b6', fontSize: '0.82rem', fontWeight: 700 }}>✦ {isRtl ? 'من نحن' : 'WHO WE ARE'}</span>
             </div>
             <h2 style={{ color: '#0f172a', fontWeight: 900, fontSize: 'clamp(1.6rem,4vw,2.6rem)', marginBottom: '12px' }}>{L.about.title}</h2>
             <p style={{ color: '#c8972b', fontWeight: 600, fontSize: '1.1rem' }}>{L.about.subtitle}</p>
@@ -458,7 +458,7 @@ export default function HomePage() {
               <p style={{ color: '#475569', fontSize: '1.05rem', lineHeight: 2, marginBottom: '24px' }}>{L.about.body}</p>
               <a href="/apply" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: '#0a5c36', color: 'white', padding: '12px 28px',
+                background: '#5b21b6', color: 'white', padding: '12px 28px',
                 borderRadius: '999px', textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem',
               }}>
                 {isRtl ? 'سجّل الآن ←' : 'Apply Now →'}
@@ -487,7 +487,7 @@ export default function HomePage() {
       </section>
 
       {/* ── PROGRAMS ── */}
-      <section style={{ background: '#0a5c36', padding: '100px 24px' }}>
+      <section style={{ background: '#5b21b6', padding: '100px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <h2 style={{ color: 'white', fontWeight: 900, fontSize: 'clamp(1.6rem,4vw,2.4rem)', marginBottom: '12px' }}>
@@ -552,13 +552,13 @@ export default function HomePage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>
             <div>
               <div style={{ display: 'inline-block', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '999px', padding: '6px 20px', marginBottom: '14px' }}>
-                <span style={{ color: '#0a5c36', fontSize: '0.82rem', fontWeight: 700 }}>✦ {isRtl ? 'مباشر من الأكاديمية' : 'LIVE FROM THE ACADEMY'}</span>
+                <span style={{ color: '#5b21b6', fontSize: '0.82rem', fontWeight: 700 }}>✦ {isRtl ? 'مباشر من الأكاديمية' : 'LIVE FROM THE ACADEMY'}</span>
               </div>
               <h2 style={{ color: '#0f172a', fontWeight: 900, fontSize: 'clamp(1.4rem,3vw,2.2rem)', margin: 0 }}>{L.news.title}</h2>
               <p style={{ color: '#64748b', marginTop: '8px', fontSize: '0.95rem' }}>{L.news.subtitle}</p>
             </div>
             <a href="/news" style={{
-              background: '#0a5c36', color: 'white', padding: '10px 24px',
+              background: '#5b21b6', color: 'white', padding: '10px 24px',
               borderRadius: '999px', textDecoration: 'none', fontWeight: 700,
               fontSize: '0.85rem', whiteSpace: 'nowrap',
             }}>{L.news.more} →</a>
@@ -574,7 +574,7 @@ export default function HomePage() {
                 <div key={a.id} style={{
                   background: 'white', borderRadius: '20px', padding: '32px',
                   border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
-                  borderTop: `4px solid ${i === 0 ? '#c8972b' : i === 1 ? '#0a5c36' : '#3b82f6'}`,
+                  borderTop: `4px solid ${i === 0 ? '#c8972b' : i === 1 ? '#5b21b6' : '#3b82f6'}`,
                   transition: 'transform 0.2s',
                 }}>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '12px', fontWeight: 600 }}>
@@ -604,7 +604,7 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             {L.gallery.items.slice(0, 2).map((item, i) => (
               <div key={i} className="gallery-card" style={{
-                background: `linear-gradient(135deg, ${['#063d22','#1e3a5f'][i]}, ${['#0d7a45','#2563eb'][i]})`,
+                background: `linear-gradient(135deg, ${['#3b0764','#1e3a5f'][i]}, ${['#6d28d9','#2563eb'][i]})`,
                 borderRadius: '20px', padding: '56px 24px', textAlign: 'center',
                 cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -645,7 +645,7 @@ export default function HomePage() {
 
       {/* ── APPLY CTA ── */}
       <section style={{
-        background: 'linear-gradient(135deg, #041f12 0%, #063d22 50%, #0a5c36 100%)',
+        background: 'linear-gradient(135deg, #041f12 0%, #3b0764 50%, #5b21b6 100%)',
         padding: '100px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(200,151,43,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />

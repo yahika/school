@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 
 interface CalEvent { id: number; titleAr: string; titleEn: string; date: string; endDate: string | null; type: string; color: string | null; descriptionAr: string | null; descriptionEn: string | null }
@@ -56,7 +56,7 @@ export default function CalendarPage() {
       {selected && (
         <div onClick={() => setSelected(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backdropFilter: 'blur(4px)' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '20px', maxWidth: '460px', width: '100%', overflow: 'hidden', boxShadow: '0 24px 60px rgba(0,0,0,0.3)', animation: 'fadeIn 0.2s ease' }}>
-            <div style={{ background: selected.color ?? TYPE_CONFIG[selected.type]?.color ?? '#0a5c36', padding: '24px', color: 'white' }}>
+            <div style={{ background: selected.color ?? TYPE_CONFIG[selected.type]?.color ?? '#5b21b6', padding: '24px', color: 'white' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{TYPE_CONFIG[selected.type]?.icon}</div>
@@ -92,7 +92,7 @@ export default function CalendarPage() {
               )}
             </div>
             <div style={{ padding: '16px 24px', borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'flex-end' }}>
-              <button onClick={() => setSelected(null)} style={{ padding: '10px 24px', background: '#0a5c36', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+              <button onClick={() => setSelected(null)} style={{ padding: '10px 24px', background: '#5b21b6', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                 {isRtl ? 'إغلاق' : 'Close'}
               </button>
             </div>
@@ -101,7 +101,7 @@ export default function CalendarPage() {
       )}
 
       {/* Nav */}
-      <nav style={{ background: '#0a5c36', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <nav style={{ background: '#5b21b6', padding: '0 24px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: 'linear-gradient(135deg,#c8972b,#a07820)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.7rem', color: 'white' }}>AEA</div>
           <a href="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 700 }}>{isRtl ? 'الرئيسية' : 'Home'}</a>
@@ -112,7 +112,7 @@ export default function CalendarPage() {
       </nav>
 
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(135deg,#063d22,#0a5c36)', padding: '48px 24px', textAlign: 'center' }}>
+      <div style={{ background: 'linear-gradient(135deg,#3b0764,#5b21b6)', padding: '48px 24px', textAlign: 'center' }}>
         <h1 style={{ color: 'white', fontSize: 'clamp(1.5rem,4vw,2.2rem)', fontWeight: 900, margin: '0 0 8px' }}>
           📅 {isRtl ? 'التقويم المدرسي' : 'School Calendar'}
         </h1>
@@ -127,7 +127,7 @@ export default function CalendarPage() {
         <div>
           {/* Type filters */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
-            <button onClick={() => setFilterType('all')} style={{ padding: '6px 14px', borderRadius: '999px', border: '2px solid', borderColor: filterType === 'all' ? '#0a5c36' : '#e2e8f0', background: filterType === 'all' ? '#0a5c36' : 'white', color: filterType === 'all' ? 'white' : '#64748b', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
+            <button onClick={() => setFilterType('all')} style={{ padding: '6px 14px', borderRadius: '999px', border: '2px solid', borderColor: filterType === 'all' ? '#5b21b6' : '#e2e8f0', background: filterType === 'all' ? '#5b21b6' : 'white', color: filterType === 'all' ? 'white' : '#64748b', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.8rem' }}>
               {isRtl ? 'الكل' : 'All'}
             </button>
             {Object.entries(TYPE_CONFIG).map(([key, cfg]) => (
@@ -139,7 +139,7 @@ export default function CalendarPage() {
 
           {/* Month navigation */}
           <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-            <div style={{ background: '#0a5c36', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ background: '#5b21b6', padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <button onClick={() => setCurrentDate(new Date(year, month - 1, 1))} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.1rem' }}>‹</button>
               <span style={{ color: 'white', fontWeight: 800, fontSize: '1.1rem' }}>{monthName}</span>
               <button onClick={() => setCurrentDate(new Date(year, month + 1, 1))} style={{ background: 'rgba(255,255,255,0.15)', border: 'none', color: 'white', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.1rem' }}>›</button>
@@ -163,16 +163,16 @@ export default function CalendarPage() {
                 const isToday = new Date().getDate() === day && new Date().getMonth() === month && new Date().getFullYear() === year
                 return (
                   <div key={day} className="day-cell" style={{ padding: '6px 4px', minHeight: '72px', background: isToday ? '#f0fdf4' : 'white', borderRight: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s' }}>
-                    <div style={{ fontWeight: isToday ? 900 : 500, fontSize: '0.85rem', marginBottom: '4px', width: '24px', height: '24px', borderRadius: '50%', background: isToday ? '#0a5c36' : 'transparent', color: isToday ? 'white' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ fontWeight: isToday ? 900 : 500, fontSize: '0.85rem', marginBottom: '4px', width: '24px', height: '24px', borderRadius: '50%', background: isToday ? '#5b21b6' : 'transparent', color: isToday ? 'white' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {day}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                       {dayEvents.slice(0, 2).map(e => (
-                        <div key={e.id} onClick={() => setSelected(e)} style={{ background: e.color ?? TYPE_CONFIG[e.type]?.color ?? '#0a5c36', color: 'white', borderRadius: '3px', padding: '1px 4px', fontSize: '0.62rem', fontWeight: 700, cursor: 'pointer', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        <div key={e.id} onClick={() => setSelected(e)} style={{ background: e.color ?? TYPE_CONFIG[e.type]?.color ?? '#5b21b6', color: 'white', borderRadius: '3px', padding: '1px 4px', fontSize: '0.62rem', fontWeight: 700, cursor: 'pointer', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                           {isRtl ? e.titleAr : e.titleEn}
                         </div>
                       ))}
-                      {dayEvents.length > 2 && <div style={{ fontSize: '0.6rem', color: '#0a5c36', fontWeight: 700 }}>+{dayEvents.length - 2}</div>}
+                      {dayEvents.length > 2 && <div style={{ fontSize: '0.6rem', color: '#5b21b6', fontWeight: 700 }}>+{dayEvents.length - 2}</div>}
                     </div>
                   </div>
                 )
@@ -199,7 +199,7 @@ export default function CalendarPage() {
                 const cfg = TYPE_CONFIG[e.type]
                 const daysLeft = Math.ceil((new Date(e.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
                 return (
-                  <div key={e.id} onClick={() => setSelected(e)} style={{ background: 'white', borderRadius: '12px', padding: '14px 16px', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', gap: '12px', alignItems: 'flex-start', transition: 'all 0.15s', borderRight: `4px solid ${e.color ?? cfg?.color ?? '#0a5c36'}` }}
+                  <div key={e.id} onClick={() => setSelected(e)} style={{ background: 'white', borderRadius: '12px', padding: '14px 16px', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', gap: '12px', alignItems: 'flex-start', transition: 'all 0.15s', borderRight: `4px solid ${e.color ?? cfg?.color ?? '#5b21b6'}` }}
                     onMouseEnter={e2 => (e2.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'}
                     onMouseLeave={e2 => (e2.currentTarget as HTMLDivElement).style.boxShadow = 'none'}
                   >
