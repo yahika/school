@@ -263,7 +263,7 @@ export default function HomePage() {
         .hero-float { animation: float 6s ease-in-out infinite; }
         .fade-up { animation: fadeUp 0.7s ease forwards; }
         .nav-link:hover { background: rgba(255,255,255,0.12) !important; color: white !important; }
-        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(10,92,54,0.12) !important; }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(91,33,182,0.15) !important; }
         .program-card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,0.1) !important; }
         .gallery-card:hover { transform: scale(1.03); }
         .gold-gradient { background: linear-gradient(135deg, #c8972b, #e5b850); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -288,7 +288,7 @@ export default function HomePage() {
       {/* ── NAVBAR ── */}
       <nav style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-        background: 'rgba(6,61,34,0.97)', backdropFilter: 'blur(16px)',
+        background: 'rgba(15,5,35,0.97)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
         padding: '0 24px', height: '68px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -327,7 +327,7 @@ export default function HomePage() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div style={{ position: 'fixed', top: '68px', left: 0, right: 0, zIndex: 999, background: 'rgba(6,61,34,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div style={{ position: 'fixed', top: '68px', left: 0, right: 0, zIndex: 999, background: 'rgba(15,5,35,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.1)', padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {[
             { label: L.nav.results, href: '/results' },
             { label: L.nav.apply, href: '/apply' },
@@ -347,13 +347,13 @@ export default function HomePage() {
 
       {/* ── HERO ── */}
       <section style={{
-        background: 'linear-gradient(160deg, #041f12 0%, #3b0764 40%, #5b21b6 70%, #0d6b40 100%)',
+        background: 'linear-gradient(160deg, #0f0523 0%, #3b0764 40%, #5b21b6 75%, #4c1d95 100%)',
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         textAlign: 'center', padding: '100px 24px 80px', position: 'relative', overflow: 'hidden',
       }}>
         {/* Background orbs */}
         <div style={{ position: 'absolute', top: '15%', left: '10%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,151,43,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(13,122,69,0.3) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '300px', height: '300px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%)', pointerEvents: 'none' }} />
         {/* Floating dots */}
         {[...Array(8)].map((_, i) => (
           <div key={i} style={{
@@ -618,7 +618,7 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             {L.gallery.items.slice(2, 5).map((item, i) => (
               <div key={i} className="gallery-card" style={{
-                background: `linear-gradient(135deg, ${['#4a1d60','#7c1d1d','#1d4a3a'][i]}, ${['#7c3aed','#dc2626','#059669'][i]})`,
+                background: `linear-gradient(135deg, ${['#4a1d60','#7c1d1d','#1d3a5a'][i]}, ${['#7c3aed','#dc2626','#2563eb'][i]})`,
                 borderRadius: '20px', padding: '40px 16px', textAlign: 'center',
                 cursor: 'pointer', transition: 'all 0.25s', boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -645,7 +645,7 @@ export default function HomePage() {
 
       {/* ── APPLY CTA ── */}
       <section style={{
-        background: 'linear-gradient(135deg, #041f12 0%, #3b0764 50%, #5b21b6 100%)',
+        background: 'linear-gradient(135deg, #0f0523 0%, #3b0764 50%, #5b21b6 100%)',
         padding: '100px 24px', textAlign: 'center', position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 50%, rgba(200,151,43,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
@@ -709,7 +709,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: '#041f12', padding: '48px 24px 24px' }}>
+      <footer style={{ background: '#0f0523', padding: '48px 24px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '48px', marginBottom: '40px', paddingBottom: '40px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             <div>
